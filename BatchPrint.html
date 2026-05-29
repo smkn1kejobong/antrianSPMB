@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Batch Print Antrian</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body { 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+      margin: 0; 
+      padding: 20px; 
+      line-height: 1.3; 
+      color: #1e293b; 
+      background-color: #f0f4f8;
+      font-size: 12px; 
+    }
+
+    .toolbar {
+      max-width: 900px;
+      margin: 0 auto 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .toolbar h1 {
+      margin: 0;
+      font-size: 22px;
+      color: #1e40af;
+    }
+
+    .toolbar p {
+      margin: 4px 0 0;
+      color: #64748b;
+    }
+
+    .btn-print {
+      border: none;
+      background: #2563eb;
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    #printContainer {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .print-page {
+      margin-bottom: 18px;
+    }
+
+    .print-logo-header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .print-logo-header .logo-img {
+      width: 65px;
+      margin-bottom: 5px;
+    }
+
+    .main-border-box { border: 2px solid #000; padding: 0; margin-bottom: 10px; background: #fff; }
+    .title-area { 
+      text-align: center; 
+      font-weight: 700; 
+      font-size: 12.5px; 
+      padding: 10px; 
+      border-bottom: 2px solid #000; 
+      text-transform: uppercase; 
+      line-height: 1.4; 
+      color: #000;
+    }
+    .section-title { 
+      font-weight: 700; 
+      padding: 5px 10px; 
+      font-size: 11px; 
+      border-bottom: 1px solid #000; 
+      background-color: #fff; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px;
+      color: #000;
+    }
+
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table td { border-bottom: 1px solid #000; padding: 4px 8px; font-size: 10.5px; height: 23px; box-sizing: border-box; vertical-align: middle; color: #000; }
+    .lbl-left { text-align: right; font-weight: 700; width: 38%; padding-right: 12px !important; }
+    .colon-center { text-align: center; width: 3%; padding: 0 !important; font-weight: 700; }
+    .val-right { text-align: left; width: 59%; }
+
+    .box-foto-container { border-left: 1px solid #000; text-align: center; vertical-align: middle !important; background: #fff; padding: 6px !important; }
+    .photo-frame {
+      border: 1px dashed #000;
+      width: 115px;
+      height: 172px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      margin: auto;
+    }
+    .text-foto-warna { color: #1e40af; font-weight: 700; font-size: 10px; line-height: 1.3; text-transform: uppercase; display: block; }
+
+    .antrian-wrapper { display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
+    .box-part {
+      border: 1px solid #000;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      border-radius: 4px;
+      line-height: 1.2;
+      display: inline-block;
+    }
+    .box-op { background: #eff6ff; color: #1e40af; }
+    .box-no { background: #eff6ff; color: #2563eb; }
+    .box-hari { background: #ffffff; color: #000000; }
+
+    .ceklis-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+    .ceklis-table th, .ceklis-table td { border: 1px solid #000; padding: 3px 5px; font-size: 10px; vertical-align: middle; color: #000; line-height: 1.2; }
+    .ceklis-table th { background-color: #f1f5f9; text-align: center; font-size: 10px; font-weight: 700; padding: 5px 3px; }
+    .center-text { text-align: center; }
+
+    .note-text { font-size: 9.5px; font-style: italic; margin-top: 6px; line-height: 1.3; color: #334155; }
+
+    .ttd-grid { width: 100%; margin-top: 12px; border-collapse: collapse; }
+    .ttd-grid td { width: 50%; text-align: center; padding: 4px 0; font-size: 10.5px; vertical-align: top; color: #000; line-height: 1.3; }
+    .ttd-space { height: 38px; }
+
+    .footer-pdf { text-align: center; margin-top: 20px; font-weight: 700; border-top: 1px dashed #000; padding-top: 6px; font-size: 10.5px; color: #000; }
+
+    .empty-state {
+      padding: 24px;
+      text-align: center;
+      color: #64748b;
+      background: #fff;
+      border-radius: 10px;
+      margin: 0 auto;
+      max-width: 900px;
+      border: 1px solid #d0dbe5;
+    }
+
+    @media print {
+      @page { size: 215mm 330mm; margin: 0.4cm 0.5cm; }
+      body { background-color: #fff; padding: 0; margin: 0; }
+      body * { visibility: hidden; }
+      #printContainer, #printContainer * { visibility: visible; }
+      #printContainer { display: block; position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0; }
+      .toolbar { display: none !important; }
+      .print-page { page-break-after: always; }
+      .print-page:last-child { page-break-after: auto; }
+      .box-op, .box-no { background: #fff !important; }
+      .photo-frame { background: #fff !important; }
+      .ceklis-table th { background-color: #eaeaea !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+  <div class="toolbar">
+    <div>
+      <h1>Batch Print Antrian</h1>
+      <p>Daftar seluruh antrian yang sudah tercatat untuk dicetak.</p>
+    </div>
+    <button class="btn-print" onclick="window.print()">Cetak Semua</button>
+  </div>
+
+  <div id="printContainer"></div>
+
+  <script>
+    const berkasJateng = [
+      "Asli Buku Rapor SMP/sederajat.",
+      "Asli Surat Keterangan Nilai Rapor Semester 1 (satu) sampai dengan Semester 5 (lima) SMP/sederajat yang diterbitkan oleh Satuan Pendidikan yang bersangkutan.",
+      "Asli Sertifikat Hasil Tes Kemampuan Akademik (TKA) SMP/sederajat atau copy Daftar Kolektif Hasil Tes Kemampuan Akademik (DKHTKA).",
+      "Asli Ijazah SMP/sederajat / Surat Keterangan yang berpenghargaan sama dengan ijazah SMP/ijazah Program Paket B/Ijazah Satuan Pendidikan Luar Negeri atau Asli Surat Keterangan Lulus (SKL).",
+      "Asli Akta Kelahiran dengan batas usia paling tinggi 21 (dua puluh satu) tahun terhitung pada tanggal 1 Juli 2026, dan belum menikah.",
+      "Asli Kartu Keluarga yang diterbitkan dan/atau telah tinggal paling singkat 1 (satu) tahun sebelum tanggal pendaftaran SPMB (Tanggal 14 Juni 2026).",
+      "Asli surat penugasan dari instansi pemerintah/lembaga negara/BUMN/BUMD/khusus perusahaan swasta yang berbadan hukum (Bagi jalur perpindahan tugas orang tua).",
+      "Asli Surat Pernyataan dari Kepala Sekolah bagi calon murid yang merupakan anak guru.",
+      "Asli Surat Keterangan Domisili/surat keterangan bertempat tinggal yang diterbitkan oleh lurah/kepala desa dan diketahui oleh camat (Bagi jalur mutasi).",
+      "Asli piagam prestasi/kejuaraan sesuai piagam yang diunggah pada saat ajuan akun bagi Calon Murid yang memiliki.",
+      "Asli Surat Keterangan Kepala Sekolah SMP/sederajat yang berisi keterangan bahwa calon murid pernah menjadi Ketua OSIS/OSIM/MPK/Pratama Pramuka.",
+      "Asli Surat Keterangan Sehat dari dokter Pemerintah atau Asli Surat Pernyataan Sehat / Asli Surat Pernyataan Tidak buta Warna dari calon murid yang diketahui orang tua."
+    ];
+
+    function escapeHtml(text) {
+      return String(text || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function formatTanggal(value) {
+      if (!value) return '-';
+
+      if (value instanceof Date) {
+        return value.toLocaleString('id-ID');
+      }
+
+      var date = new Date(value);
+
+      if (isNaN(date.getTime())) {
+        return String(value);
+      }
+
+      return date.toLocaleString('id-ID');
+    }
+
+    function buildRows(rows) {
+      if (!rows || rows.length === 0) {
+        document.getElementById('printContainer').innerHTML = '<div class="empty-state">Belum ada data antrian.</div>';
+        return;
+      }
+
+      var html = rows.map(function (row, index) {
+        var berkasRows = berkasJateng.map(function (item, itemIndex) {
+          return '<tr><td class="center-text"><b>' + (itemIndex + 1) + '</b></td><td>' + escapeHtml(item) + '</td><td></td><td></td><td></td></tr>';
+        }).join('');
+
+        return [
+          '<section class="print-page">',
+          '<div class="print-logo-header">',
+          '<img src="LOGO_SEKOLAH.png" alt="Logo Sekolah" class="logo-img">',
+          '</div>',
+          '<div class="main-border-box">',
+          '<div class="title-area">',
+          'DAFTAR VERIFIKASI KELENGKAPAN DOKUMEN/BERKAS SPMB SMA NEGERI/SMK NEGERI<br>',
+          'PROVINSI JAWA TENGAH<br>',
+          'TAHUN 2026',
+          '</div>',
+          '<div class="section-title">A. DATA CALON MURID</div>',
+          '<table class="data-table">',
+          '<tr>',
+          '<td class="lbl-left">LOKASI VERIFIKASI</td>',
+          '<td class="colon-center">:</td>',
+          '<td class="val-right"><b>' + escapeHtml('<?= namaSekolah ?>') + '</b></td>',
+          '<td rowspan="9" class="box-foto-container" width="135">',
+          '<div class="photo-frame"><span class="text-foto-warna">PAS FOTO<br>4 x 6</span></div>',
+          '</td>',
+          '</tr>',
+          '<tr>',
+          '<td class="lbl-left">NAMA CALON MURID BARU</td>',
+          '<td class="colon-center">:</td>',
+          '<td class="val-right"><span style="font-weight:bold;">' + escapeHtml(row.nama) + '</span></td>',
+          '</tr>',
+          '<tr>',
+          '<td class="lbl-left">NISN</td>',
+          '<td class="colon-center">:</td>',
+          '<td class="val-right">' + escapeHtml(row.nisn) + '</td>',
+          '</tr>',
+          '<tr>',
+          '<td class="lbl-left">NIK</td>',
+          '<td class="colon-center">:</td>',
+          '<td class="val-right">............................................................</td>',
+          '</tr>',
+          '<tr>',
+          '<td class="lbl-left">NAMA ORANG TUA / WALI</td>',
+          '<td class="colon-center">:</td>',
+          '<td class="val-right">............................................................</td>',
+          '</tr>',
+          '<tr>',
+          '<td class="lbl-left">NOMOR HP / WA ( Aktif )</td>',
+          '<td class="colon-center">:</td>',
+          '<td class="val-right">' + escapeHtml(row.no_hp) + '</td>',
+          '</tr>',
+          '<tr>',
+          '<td class="lbl-left">ASAL SMP / MTs / PAKET B</td>',
+          '<td class="colon-center">:</td>',
+          '<td class="val-right">' + escapeHtml(row.asal) + '</td>',
+          '</tr>',
+          '<tr>',
+          '<td class="lbl-left">NOMOR AJUAN AKUN</td>',
+          '<td class="colon-center">:</td>',
+          '<td class="val-right">............................................................</td>',
+          '</tr>',
+          '<tr>',
+          '<td class="lbl-left">NOMOR ANTRIAN VERIFIKASI</td>',
+          '<td class="colon-center">:</td>',
+          '<td class="val-right">',
+          '<div class="antrian-wrapper">',
+          '<span class="box-part box-op">' + escapeHtml(row.loket || '-') + '</span>',
+          '<span class="box-part box-no">NOMOR ' + escapeHtml(row.nomor || '-') + '</span>',
+          '<span class="box-part box-hari">' + escapeHtml(row.hari || '-') + '</span>',
+          '</div>',
+          '</td>',
+          '</tr>',
+          '<tr>',
+          '<td class="lbl-left">SESI</td>',
+          '<td class="colon-center">:</td>',
+          '<td class="val-right"><span style="font-weight:bold;">' + escapeHtml(row.sesi || '-') + '</span></td>',
+          '</tr>',
+          '<tr>',
+          '<td class="lbl-left" style="border-bottom:none;">JALUR YANG DAPAT DIGUNAKAN UNTUK PENDAFTARAN/PEMILIHAN SEKOLAH</td>',
+          '<td class="colon-center" style="border-bottom:none;">:</td>',
+          '<td class="val-right" colspan="2" style="border-bottom:none;">..........................................................................................</td>',
+          '</tr>',
+          '</table>',
+          '</div>',
+          '<div class="section-title" style="border: 2px solid #000; border-bottom:1px solid #000; margin-bottom:0;">B. DOKUMEN/BERKAS</div>',
+          '<table class="ceklis-table" style="margin-top:0; border: 2px solid #000; border-top:none;">',
+          '<thead><tr><th width="4%">NO</th><th width="66%">NAMA DOKUMEN/BERKAS</th><th width="9%">FOTO COPY<br>(ADA/TIDAK)</th><th width="9%">BERKAS ASLI<br>(YA/TIDAK)</th><th width="12%">KETERANGAN</th></tr></thead>',
+          '<tbody>' + berkasRows + '</tbody>',
+          '</table>',
+          '<div class="note-text">',
+          'Demikian Dokumen/Berkas SPMB SMA Negeri dan SMK Negeri yang telah diperiksa dan teliti sesuai dengan aslinya oleh Tim Verifikasi, Orang Tua/Wali, Calon Peserta Didik dan Ketua Panitia SPMB Tingkat Sekolah.<br>',
+          'Apabila di kemudian hari ditemukan dan atau terdapat Dokumen yang tidak sesuai, sepenuhnya menjadi tanggungjawab Orang Tua Wali dan Calon Murid Baru.<br>',
+          '<b>Dokumen ini dicetak 2 (dua) rangkap. 1 (satu) untuk orang tua/wali, 1 untuk arsip Sekolah.</b>',
+          '</div>',
+          '<table class="ttd-grid">',
+          '<tr>',
+          '<td>Orang Tua/Wali,<br><div class="ttd-space"></div>( ............................................ )</td>',
+          '<td>' + escapeHtml(row.hari || '-') + '<br>Calon Murid,<br><div class="ttd-space"></div>( <b>' + escapeHtml(row.nama) + '</b> )</td>',
+          '</tr>',
+          '<tr>',
+          '<td>Mengetahui,<br>Ketua Panitia<br><div class="ttd-space"></div>( <b>________________________ </b>)<br>NIP.100000000000000</td>',
+          '<td><br>Verifikator,<br><div class="ttd-space"></div>( ________________________ )</td>',
+          '</tr>',
+          '</table>',
+          '<div class="footer-pdf">' + escapeHtml('<?= footerTeks ?>') + '</div>',
+          '</section>'
+        ].join('');
+
+        return html;
+      }).join('');
+
+      document.getElementById('printContainer').innerHTML = html;
+    }
+
+    google.script.run.withSuccessHandler(function (data) {
+      buildRows(data);
+    }).getBatchPrintData();
+  </script>
+</body>
+</html>
