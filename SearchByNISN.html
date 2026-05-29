@@ -3,41 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cari NISN & Cetak</title>
+  <title>SPMB 2026 - Cari NISN</title>
   <style>
     * { box-sizing: border-box; }
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      line-height: 1.3;
-      color: #1e293b;
+    body { 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+      margin: 0; 
+      padding: 20px; 
+      line-height: 1.3; 
+      color: #1e293b; 
       background-color: #f0f4f8;
-      font-size: 12px;
+      font-size: 12px; 
     }
 
-    .container {
-      max-width: 520px;
-      margin: 40px auto;
-      padding: 35px;
+    .container { 
+      max-width: 520px; 
+      margin: 40px auto; 
+      padding: 35px; 
       background: #ffffff;
       border: 1px solid #d0dbe5;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.05);
+      border-radius: 12px; 
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.05); 
     }
-
     .form-header { text-align: center; margin-bottom: 25px; }
     .logo-img { width: 75px; height: auto; margin-bottom: 12px; }
     .form-header h2 { color: #1e40af; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
     .form-header p { color: #475569; margin: 5px 0 0 0; font-size: 15px; font-weight: 600; }
-
+    
     .form-group { margin-bottom: 18px; }
     label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; color: #334155; }
-    input {
-      width: 100%;
-      padding: 11px 14px;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
+    input { 
+      width: 100%; 
+      padding: 11px 14px; 
+      border: 1px solid #cbd5e1; 
+      border-radius: 6px; 
       font-size: 14px;
       background-color: #f8fafc;
       transition: all 0.2s ease;
@@ -48,41 +47,25 @@
       background-color: #fff;
       box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
     }
-
-    button#btn {
-      background: #2563eb;
-      color: white;
-      padding: 14px;
-      border: none;
-      border-radius: 6px;
-      width: 100%;
-      cursor: pointer;
-      font-size: 15px;
-      font-weight: 700;
+    
+    button#btn { 
+      background: #2563eb; 
+      color: white; 
+      padding: 14px; 
+      border: none; 
+      border-radius: 6px; 
+      width: 100%; 
+      cursor: pointer; 
+      font-size: 15px; 
+      font-weight: 700; 
       letter-spacing: 0.5px;
       transition: background 0.2s ease;
     }
     button#btn:hover { background: #1d4ed8; }
     button:disabled { background: #94a3b8; cursor: not-allowed; }
 
-    .status-message {
-      margin-top: 16px;
-      padding: 12px 14px;
-      border-radius: 6px;
-      border: 1px solid #d0dbe5;
-      color: #1e293b;
-      background: #f8fafc;
-      font-size: 12.5px;
-    }
-
-    .status-message.error {
-      color: #b91c1c;
-      border-color: #fecaca;
-      background: #fff1f2;
-    }
-
-    #printArea {
-      display: none;
+    #printArea { 
+      display: none; 
       background: #fff;
       max-width: 790px;
       margin: 10px auto;
@@ -99,23 +82,24 @@
     }
 
     .main-border-box { border: 2px solid #000; padding: 0; margin-bottom: 10px; background: #fff; }
-    .title-area {
-      text-align: center;
-      font-weight: 700;
-      font-size: 12.5px;
-      padding: 10px;
-      border-bottom: 2px solid #000;
-      text-transform: uppercase;
-      line-height: 1.4;
+
+    .title-area { 
+      text-align: center; 
+      font-weight: 700; 
+      font-size: 12.5px; 
+      padding: 10px; 
+      border-bottom: 2px solid #000; 
+      text-transform: uppercase; 
+      line-height: 1.4; 
       color: #000;
     }
-    .section-title {
-      font-weight: 700;
-      padding: 5px 10px;
-      font-size: 11px;
-      border-bottom: 1px solid #000;
-      background-color: #fff;
-      text-transform: uppercase;
+    .section-title { 
+      font-weight: 700; 
+      padding: 5px 10px; 
+      font-size: 11px; 
+      border-bottom: 1px solid #000; 
+      background-color: #fff; 
+      text-transform: uppercase; 
       letter-spacing: 0.5px;
       color: #000;
     }
@@ -188,34 +172,32 @@
   </style>
 </head>
 <body>
+
   <div id="searchArea" class="container">
     <div class="form-header">
-      <img src="https://avatars.githubusercontent.com/u/73335712" alt="Logo Sekolah" class="logo-img">
+      <img src="LOGO_SEKOLAH.png" alt="Logo Sekolah" class="logo-img">
       <h2>SPMB 2026</h2>
       <p><?= namaSekolah ?></p>
     </div>
 
-    <form id="searchForm" onsubmit="submitSearch(this); return false;">
+    <form id="fSearch" onsubmit="cariByNISN(this); return false;">
       <div class="form-group">
         <label>NISN</label>
         <input type="text"
                name="nisn"
                inputmode="numeric"
-               pattern="[0-9]{10}"
                maxlength="10"
-               placeholder="Masukkan 10 digit NISN"
+               placeholder="Masukkan NISN yang ingin dicari"
                oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                required>
       </div>
-      <button type="submit" id="btn">CARI DAN CETAK</button>
+      <button type="submit" id="btn">CARI DATA ANTRIAN</button>
     </form>
-
-    <div id="statusMessage" class="status-message" style="display:none;"></div>
   </div>
 
   <div id="printArea">
     <div class="print-logo-header">
-      <img src="https://avatars.githubusercontent.com/u/73335712" alt="Logo Sekolah" class="logo-img">
+      <img src="LOGO_SEKOLAH.png" alt="Logo Sekolah" class="logo-img">
     </div>
 
     <div class="main-border-box">
@@ -324,7 +306,7 @@
         <td>........................., Juni 2026<br>Calon Murid,<br><div class="ttd-space"></div>( <b><span id="p1_ttd"></span></b> )</td>
       </tr>
       <tr>
-        <td>Mengetahui,<br>Ketua Panitia<br><div class="ttd-space"></div>( <b>________________________ </b>)<br>NIP.100000000000000</td>
+        <td>Mengetahui,<br>Ketua Panitia<br><div class="ttd-space"></div>( <b>________________________ </b>)<br>NIP.-</td>
         <td><br>Verifikator,<br><div class="ttd-space"></div>( ________________________ )</td>
       </tr>
     </table>
@@ -332,8 +314,8 @@
     <div class="footer-pdf"><?= footerTeks ?></div>
 
     <div class="btn-container no-print">
-      <button onclick="window.print()" class="btn-action btn-print">CETAK FORM VERIFIKASI</button>
-      <button onclick="window.location.reload()" class="btn-action btn-back">KEMBALI</button>
+      <button onclick="window.print();" class="btn-action btn-print">CETAK FORM VERIFIKASI</button>
+      <button onclick="window.location.replace(window.location.pathname);" class="btn-action btn-back">KEMBALI</button>
     </div>
   </div>
 
@@ -356,7 +338,7 @@
     let rows = "";
     berkasJateng.forEach((b, i) => {
       rows += `<tr>
-        <td class="center-text"><b>${i + 1}</b></td>
+        <td class="center-text"><b>${i+1}</b></td>
         <td>${b}</td>
         <td></td>
         <td></td>
@@ -365,40 +347,20 @@
     });
     document.getElementById('listBerkas').innerHTML = rows;
 
-    function showMessage(text, type) {
-      var status = document.getElementById('statusMessage');
-      if (!text) {
-        status.style.display = 'none';
-        status.innerText = '';
-        status.className = 'status-message';
-        return;
-      }
-
-      status.style.display = 'block';
-      status.innerText = text;
-      status.className = 'status-message ' + (type === 'error' ? 'error' : '');
-    }
-
-    function submitSearch(form) {
-      var nisn = form.nisn.value.replace(/\D/g, '');
-
-      if (!nisn) {
-        showMessage('Masukkan NISN terlebih dahulu.', 'error');
-        return;
-      }
-
+    function cariByNISN(f) {
       document.getElementById('btn').disabled = true;
       document.getElementById('btn').innerText = 'MENCARI DATA...';
-      showMessage('', '');
 
-      google.script.run.withSuccessHandler(function (res) {
-        document.getElementById('btn').disabled = false;
-        document.getElementById('btn').innerText = 'CARI DAN CETAK';
+      google.script.run.withSuccessHandler(res => {
+        // if (!res) {
+        //   document.getElementById('btn').disabled = false;
+        //   document.getElementById('btn').innerText = 'CARI DATA ANTRIAN';
+        //   alert('Data dengan NISN tersebut tidak ditemukan.');
+        //   return;
+        // }
 
-        if (!res) {
-          showMessage('NISN tidak ditemukan dalam DataAntrian.', 'error');
-          return;
-        }
+        console.log(f.nisn.value);
+        console.log(res.nisn);
 
         document.getElementById('searchArea').style.display = 'none';
         document.getElementById('printArea').style.display = 'block';
@@ -413,11 +375,11 @@
         document.getElementById('lblLoket').innerText = res.loket;
 
         window.print();
-      }).withFailureHandler(function (err) {
+      }).withFailureHandler(err => {
         document.getElementById('btn').disabled = false;
-        document.getElementById('btn').innerText = 'CARI DAN CETAK';
-        showMessage(err.message || 'Gagal mencari data antrian.', 'error');
-      }).searchAntrianByNISN(nisn);
+        document.getElementById('btn').innerText = 'CARI DATA ANTRIAN';
+        alert(err.message || 'Terjadi kesalahan saat mencari data.');
+      }).searchAntrianByNISN(f.nisn.value);
     }
   </script>
 </body>

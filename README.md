@@ -1,83 +1,33 @@
-# 🚀 SPMB 2026 - Sistem Antrian & Verifikasi Berkas Sekolah (Google Apps Script)
+# ?? SPMB 2026 - Sistem Antrian & Verifikasi Berkas
 
-Sistem ini adalah aplikasi web sederhana berbasis **Google Apps Script + Google Spreadsheet + GitHub Pages** untuk:
+Sistem ini dibangun dengan **Google Apps Script** dan **Google Spreadsheet** untuk mengelola antrian pendaftaran, pencarian peserta, panel admin, dan cetak verifikasi.
 
-* Antrian Verifikasi SPMB/PPDB
-* Cetak Form Verifikasi Berkas
-* Multi Operator/Loket
-* Kuota Harian
-* Dashboard Admin
-* Hosting Gratis
-* Custom Domain
+## ?? Komponen Aplikasi
 
-Cocok digunakan untuk:
+- `Kode.gs`  
+  Backend Apps Script. Mengatur routing halaman, membaca/mengubah `Settings`, menulis data ke `DataAntrian`, serta menyediakan pencarian dan batch print.
 
-* SMA / SMK
-* PPDB Sekolah
-* Verifikasi Berkas
-* Registrasi Event Sekolah
-* Antrian Pelayanan Sekolah
+- `Index.html`  
+  Halaman utama untuk calon peserta. Menangani form pendaftaran antrian, nomor antrian, loket, sesi, dan preview cetak.
 
----
+- `Admin.html`  
+  Panel konfigurasi untuk mengatur nama sekolah, footer, tanggal mulai, kuota harian, dan jumlah operator.
 
-# ✨ Fitur Utama
+- `SearchByNISN.html`  
+  Halaman pencarian berdasarkan NISN untuk menampilkan data antrian dan mencetak ulang form.
 
-✅ Form Antrian Online
-✅ Multi Operator (Round Robin)
-✅ Kuota Harian Otomatis
-✅ Generate Form Verifikasi
-✅ Print Layout F4 Resmi
-✅ Admin Panel Setting
-✅ Google Spreadsheet Database
-✅ Hosting Gratis via GitHub Pages
-✅ Bisa Pakai Domain Sendiri
+- `BatchPrint.html`  
+  Halaman daftar antrian dengan preview per peserta, cetak per peserta, cetak semua, dan paginasi.
 
 ---
 
-# 🧩 Arsitektur Sistem
+## ?? Struktur Spreadsheet
 
-```text
-User Browser
-     ↓
-GitHub Pages (iframe)
-     ↓
-Google Apps Script Web App
-     ↓
-Google Spreadsheet Database
-```
+Buat spreadsheet baru, lalu buat dua sheet berikut:
 
----
+### 1. `Settings`
 
-# 📁 Struktur File
-
-```text
-📦 project
- ┣ 📄 Code.gs
- ┣ 📄 Index.html
- ┣ 📄 Admin.html
- ┣ 📄 Spreadsheet
- ┗ 📄 README.md
-```
-
----
-
-# ⚙️ STEP 1 — Membuat Spreadsheet
-
-## 1. Buat Google Spreadsheet Baru
-
-Contoh nama:
-
-```text
-SPMB-2026
-```
-
----
-
-## 2. Buat Sheet Berikut
-
-### Sheet 1 → `Settings`
-
-Isi:
+Isi nilai di kolom B sesuai berikut:
 
 | A              | B                                  |
 | -------------- | ---------------------------------- |
@@ -87,322 +37,81 @@ Isi:
 | namaSekolah    | SMK Negeri 2 Purwodadi             |
 | footerTeks     | SPMB 2026 - SMK Negeri 2 Purwodadi |
 
----
+### 2. `DataAntrian`
 
-### Sheet 2 → `DataAntrian`
+Header wajib:
 
-Header:
+| Timestamp | NISN | NoHP | Nama | Asal | Tanggal | Nomor | KeyDate | Loket | Sesi |
 
-| Timestamp | NISN | NoHP | Nama | Asal | Tanggal | Nomor | KeyDate | Loket |
-
----
-
-# ⚙️ STEP 2 — Membuat Google Apps Script
-
-## 1. Buka:
-
-```text
-Extensions → Apps Script
-```
+Data akan otomatis ditambahkan saat peserta mengambil nomor antrian.
 
 ---
 
-## 2. Upload 3 File
+## ?? Cara Menjalankan Aplikasi
 
-### File:
+### 1. Buat Spreadsheet dan Sheet
 
-* `Code.gs`
-* `Index.html`
-* `Admin.html`
+Buat spreadsheet baru di Google Drive dan pastikan sheet `Settings` serta `DataAntrian` tersedia.
 
----
+### 2. Upload Project ke Google Apps Script
 
-## 3. Paste Kode
+Di spreadsheet:
 
-Paste semua source code ke file masing-masing.
+1. Buka **Extensions ? Apps Script**
+2. Upload file berikut ke project:
+   - `Kode.gs`
+   - `Index.html`
+   - `Admin.html`
+   - `SearchByNISN.html`
+   - `BatchPrint.html`
 
----
+### 3. Ganti Spreadsheet ID
 
-# ⚙️ STEP 3 — Ganti Spreadsheet ID
-
-Cari bagian ini:
+Di `Kode.gs`, ganti nilai:
 
 ```javascript
 SpreadsheetApp.openById("SPREADSHEET_ID")
 ```
 
-Ganti dengan ID spreadsheet Anda.
+Dengan ID spreadsheet Anda.
 
----
-
-## Cara Ambil Spreadsheet ID
-
-Contoh URL:
+Contoh ID dari URL spreadsheet:
 
 ```text
 https://docs.google.com/spreadsheets/d/1ABCDEF123456789/edit
 ```
 
-Ambil bagian:
+ID yang dipakai: `1ABCDEF123456789`
 
-```text
-1ABCDEF123456789
-```
+### 4. Deploy Web App
 
----
-
-# ⚙️ STEP 4 — Deploy Web App
-
-Klik:
-
-```text
-Deploy → New Deployment
-```
+1. Klik **Deploy ? New deployment**
+2. Pilih **Web app**
+3. Atur:
+   - **Execute as:** Me
+   - **Who has access:** Anyone
+4. Klik **Deploy**
+5. Salin URL deployment
 
 ---
 
-## Pilih:
+## ??? Cara Penggunaan
 
-```text
-Type → Web App
-```
+### Halaman utama antrian
 
----
+Buka URL deployment untuk membuka halaman antrean.
 
-## Setting:
+Form peserta akan:
+- menerima `NISN`, `NoHP`, `Nama`, dan `Asal Sekolah`
+- menyimpan data ke `DataAntrian`
+- menghitung nomor antrian berdasarkan kuota harian
+- menentukan operator/loket berdasarkan jumlah operator
+- menampilkan nomor antrian, loket, dan sesi
+- menampilkan preview cetak form verifikasi
 
-| Setting        | Value  |
-| -------------- | ------ |
-| Execute As     | Me     |
-| Who Has Access | Anyone |
+### Admin panel
 
----
-
-## Klik:
-
-```text
-Deploy
-```
-
----
-
-## Copy URL Web App
-
-Contoh:
-
-```text
-https://script.google.com/macros/s/AKfycbxxxx/exec
-```
-
----
-
-# ⚙️ STEP 5 — Membuat GitHub Repository
-
-## 1. Buka GitHub
-
-Buat repository baru.
-
-Contoh:
-
-```text
-spmb-2026
-```
-
----
-
-## 2. Upload File `index.html`
-
-Isi:
-
-```html
-<!DOCTYPE html>
-<html>
-<head>
-  <title>SPMB 2026</title>
-
-  <style>
-    html,body{
-      margin:0;
-      padding:0;
-      width:100%;
-      height:100%;
-      overflow:hidden;
-    }
-
-    iframe{
-      width:100%;
-      height:100vh;
-      border:none;
-    }
-  </style>
-</head>
-
-<body>
-
-<iframe
-src="URL_WEB_APP_GOOGLE_SCRIPT">
-</iframe>
-
-</body>
-</html>
-```
-
----
-
-## 3. Ganti:
-
-```html
-URL_WEB_APP_GOOGLE_SCRIPT
-```
-
-dengan URL deploy Apps Script Anda.
-
----
-
-# ⚙️ STEP 6 — Aktifkan GitHub Pages
-
-Masuk:
-
-```text
-Settings → Pages
-```
-
----
-
-## Source:
-
-```text
-Deploy from Branch
-```
-
----
-
-## Branch:
-
-```text
-main
-```
-
----
-
-## Folder:
-
-```text
-/ root
-```
-
----
-
-## Save
-
----
-
-# 🌐 STEP 7 — Website Online
-
-GitHub akan memberikan URL:
-
-```text
-https://username.github.io/spmb-2026
-```
-
----
-
-# 🌐 STEP 8 — Custom Domain (Opsional)
-
-## Contoh:
-
-```text
-spmb.sekolah.sch.id
-```
-
----
-
-## Tambahkan di GitHub Pages:
-
-```text
-Custom Domain
-```
-
----
-
-## Tambahkan DNS:
-
-### Untuk Subdomain:
-
-```dns
-CNAME → username.github.io
-```
-
----
-
-# 🔒 KEAMANAN YANG DIREKOMENDASIKAN
-
-## 1. Tambahkan LockService
-
-Agar nomor antrian tidak double.
-
----
-
-## 2. Tambahkan Admin Authentication
-
-Minimal whitelist email:
-
-```javascript
-Session.getActiveUser().getEmail()
-```
-
----
-
-## 3. Tambahkan Validasi Duplicate NISN
-
----
-
-## 4. Gunakan HTTPS
-
-GitHub Pages otomatis HTTPS.
-
----
-
-# 🖨️ FITUR CETAK
-
-Sistem sudah support:
-
-✅ Kertas F4/Folio
-✅ Print Browser
-✅ Form Verifikasi
-✅ Checklist Berkas
-✅ Multi Tanda Tangan
-
----
-
-# 📱 RESPONSIVE
-
-Sistem dapat dibuka melalui:
-
-* HP Android
-* iPhone
-* Laptop
-* Tablet
-
----
-
-# 🚀 FITUR YANG BISA DITAMBAHKAN
-
-* QR Code Tiket
-* WhatsApp Gateway
-* Dashboard Statistik
-* Upload Dokumen
-* AI Chatbot Sekolah
-* OCR KK / Akta
-* Export PDF
-* Sistem Login Admin
-* Scan Barcode
-
----
-
-# 📌 URL Admin Panel
-
-Tambahkan:
+Tambah parameter `page=admin` pada URL deployment:
 
 ```text
 ?page=admin
@@ -414,30 +123,68 @@ Contoh:
 https://script.google.com/macros/s/AKfycbxxxx/exec?page=admin
 ```
 
+Panel ini digunakan untuk mengubah konfigurasi sekolah dan kuota harian.
+
+### Cari data berdasarkan NISN
+
+Tambah parameter `page=searchbynisn` pada URL deployment:
+
+```text
+?page=searchbynisn
+```
+
+Masukkan NISN untuk mencari peserta yang sudah tercatat.
+
+### Batch print
+
+Tambah parameter `page=batchprint` pada URL deployment:
+
+```text
+?page=batchprint
+```
+
+Halaman ini menampilkan seluruh data antrian dan mendukung:
+- preview per peserta
+- cetak per peserta
+- cetak semua
+- paginasi daftar
+
 ---
 
-# 📌 Teknologi Yang Digunakan
+## ?? Alur Data
 
-| Teknologi          | Fungsi           |
-| ------------------ | ---------------- |
-| Google Apps Script | Backend          |
-| Google Spreadsheet | Database         |
-| GitHub Pages       | Hosting Frontend |
-| HTML CSS JS        | Frontend         |
-| Google Web App     | API Server       |
-
----
-
-# ❤️ Credits
-
-Developed for:
-
-* Sistem SPMB / PPDB Sekolah
-* Open Source Education Project
-* Indonesia School Digitalization
+1. Peserta mengisi formulir di `Index.html`
+2. `Kode.gs` menjalankan `daftarAntrian()`
+3. Data disimpan ke sheet `DataAntrian`
+4. Nomor antrian, loket, dan sesi dikembalikan ke halaman
+5. Data dapat dicari melalui `SearchByNISN.html`
+6. `BatchPrint.html` menampilkan dan mencetak data dari `DataAntrian`
 
 ---
 
-# 📜 License
+## ?? Catatan Penting
 
-Free to use for educational purposes.
+- `Settings` harus selalu terisi dengan nilai valid agar perhitungan kuota dan operator berjalan.
+- `DataAntrian` adalah sumber data utama untuk pencarian, preview, dan cetak.
+- `Admin.html` hanya mengubah `Settings`, bukan data antrean.
+- Pastikan antrian sudah tercatat sebelum melakukan pencarian atau batch print.
+
+---
+
+## ? Contoh URL Aplikasi
+
+```text
+https://script.google.com/macros/s/AKfycbxxxx/exec
+https://script.google.com/macros/s/AKfycbxxxx/exec?page=admin
+https://script.google.com/macros/s/AKfycbxxxx/exec?page=searchbynisn
+https://script.google.com/macros/s/AKfycbxxxx/exec?page=batchprint
+```
+
+---
+
+## ?? Teknologi yang Digunakan
+
+- Google Apps Script
+- Google Spreadsheet
+- HTML, CSS, JavaScript
+- Google Web App

@@ -133,8 +133,113 @@ function normalizeSheetValue(value) {
     return "";
   }
 
-  return String(value).replace(/^'/, "");
+  return String(value)
+    .replace(/^'/, "")
+    .trim();
 
+}
+
+function normalizeNisnValue(value) {
+  return normalizeSheetValue(value).replace(/\D/g, "");
+}
+
+function normalizePhoneValue(value) {
+  return normalizeSheetValue(value).replace(/\D/g, "");
+}
+
+var HARI_INDO = [
+  "Minggu",
+  "Senin",
+  "Selasa",
+  "Rabu",
+  "Kamis",
+  "Jumat",
+  "Sabtu"
+];
+
+var BULAN_INDO = [
+  "Januari",
+  "Februari",
+  "Maret",
+  "April",
+  "Mei",
+  "Juni",
+  "Juli",
+  "Agustus",
+  "September",
+  "Oktober",
+  "November",
+  "Desember"
+];
+
+function normalizeDateValue(value) {
+  if (value instanceof Date) {
+    return value;
+  }
+
+  if (!value) {
+    return null;
+  }
+
+  var parsed = new Date(value);
+
+  return isNaN(parsed.getTime()) ? null : parsed;
+}
+
+function formatTanggalCetak(value) {
+  var targetDate = normalizeDateValue(value);
+
+  if (!targetDate) {
+    return "";
+  }
+
+  return HARI_INDO[targetDate.getDay()] +
+    ", " +
+    targetDate.getDate() +
+    " " +
+    BULAN_INDO[targetDate.getMonth()] +
+    " " +
+    targetDate.getFullYear();
+}
+
+function formatSheetDate(value) {
+  var targetDate = normalizeDateValue(value);
+
+  if (!targetDate) {
+    return "";
+  }
+
+  return Utilities.formatDate(
+    targetDate,
+    Session.getScriptTimeZone(),
+    "dd/MM/yyyy"
+  );
+}
+
+function formatSheetDateTime(value) {
+  var targetDate = normalizeDateValue(value);
+
+  if (!targetDate) {
+    return "";
+  }
+
+  return Utilities.formatDate(
+    targetDate,
+    Session.getScriptTimeZone(),
+    "dd/MM/yyyy HH:mm:ss"
+  );
+}
+
+function getActiveSheetRows(sheet, columnCount) {
+  var lastRow = sheet.getLastRow();
+
+  if (lastRow < 2) {
+    return [];
+  }
+
+  return sheet
+    .getRange(2, 1, lastRow - 1, columnCount)
+    .getValues();
 }
 
 // ==========================================
@@ -154,12 +259,11 @@ function getBatchPrintData() {
     );
   }
 
-  var data =
-    dataSheet.getDataRange().getValues();
+  var data = getActiveSheetRows(dataSheet, 10);
 
   var hasil = [];
 
-  for (var i = 1; i < data.length; i++) {
+  for (var i = 0; i < data.length; i++) {
 
     var row = data[i];
 
@@ -171,37 +275,38 @@ function getBatchPrintData() {
       continue;
     }
 
-    hasil.push({
+    var createdAt = formatSheetDateTime(row[0]);
+    var tglCetak = formatTanggalCetak(row[5]);
+    var tanggal = formatSheetDate(row[7]);
 
-      createdAt:
-        row[0],
+    hasil.push ({
 
-      nisn:
-        normalizeSheetValue(row[1]),
+      createdAt: createdAt,
+
+      nisn: String(row[1]),
 
       no_hp:
-        normalizeSheetValue(row[2]),
+        String(row[2]),
 
       nama:
-        row[3],
+        String(row[3]),
 
       asal:
-        row[4],
+        String(row[4]),
 
       hari:
-        row[5],
+        String(tglCetak),
 
       nomor:
-        row[6],
+        String(row[6]),
 
-      tanggal:
-        row[7],
+      tanggal: tanggal,
 
       loket:
-        row[8],
+        String(row[8]),
 
       sesi:
-        row[9]
+        String(row[9])
 
     });
 
@@ -218,66 +323,56 @@ function searchAntrianByNISN(nisn) {
   var dataSheet =
     ss.getSheetByName("DataAntrian");
 
-  if (!dataSheet) {
-    throw new Error(
-      "Sheet DataAntrian tidak ditemukan!"
-    );
-  }
+  var data = getActiveSheetRows(dataSheet, 10);
 
   var targetNisn =
-    String(nisn || "").replace(/\D/g, "");
+    String(nisn).trim();
 
-  if (targetNisn === "") {
-    throw new Error(
-      "NISN wajib diisi!"
-    );
-  }
-
-  var data =
-    dataSheet.getDataRange().getValues();
-
-  for (var i = 1; i < data.length; i++) {
+  for (var i = 0; i < data.length; i++) {
 
     var row = data[i];
 
-    if (!row || row.length === 0) {
-      continue;
-    }
+    var sheetNisn =
+      String(row[1]).trim();
 
-    if (normalizeSheetValue(row[1]).replace(/\D/g, "") === targetNisn) {
+    var tglCetak =
+      formatTanggalCetak(row[5]);
+
+    if (sheetNisn === targetNisn) {
+
       return {
 
         createdAt:
-          row[0],
+          formatSheetDateTime(row[0]),
 
-        nisn:
-          normalizeSheetValue(row[1]),
+        nisn: sheetNisn,
 
         no_hp:
-          normalizeSheetValue(row[2]),
+          String(row[2]),
 
         nama:
-          row[3],
+          String(row[3]),
 
         asal:
-          row[4],
+          String(row[4]),
 
         hari:
-          row[5],
+          String(tglCetak),
 
         nomor:
-          row[6],
+          String(row[6]),
 
         tanggal:
-          row[7],
+          formatSheetDate(row[7]),
 
         loket:
-          row[8],
+          String(row[8]),
 
         sesi:
-          row[9]
+          String(row[9])
 
       };
+
     }
 
   }
@@ -327,7 +422,7 @@ function daftarAntrian(formData) {
       Number(settings[2][1]);
 
     var data =
-      dataSheet.getDataRange().getValues();
+      getActiveSheetRows(dataSheet, 10);
 
     var sekarang =
       new Date();
@@ -362,9 +457,11 @@ function daftarAntrian(formData) {
 
       var jumlahHariIni = 0;
 
-      for (var i = 1; i < data.length; i++) {
+      for (var i = 0; i < data.length; i++) {
 
-        if (data[i][7] === tglString) {
+        var rowTanggal = normalizeDateValue(data[i][7]);
+
+        if (rowTanggal && rowTanggal.toDateString() === tglString) {
           jumlahHariIni++;
         }
 
@@ -432,47 +529,8 @@ function daftarAntrian(formData) {
     // FORMAT TANGGAL
     // ==================================
 
-    var hariIndo = [
-
-      "Minggu",
-      "Senin",
-      "Selasa",
-      "Rabu",
-      "Kamis",
-      "Jumat",
-      "Sabtu"
-
-    ];
-
-    var bulanIndo = [
-
-      "Januari",
-      "Februari",
-      "Maret",
-      "April",
-      "Mei",
-      "Juni",
-      "Juli",
-      "Agustus",
-      "September",
-      "Oktober",
-      "November",
-      "Desember"
-
-    ];
-
     var tglCetak =
-
-      hariIndo[targetDate.getDay()] +
-      ", " +
-
-      targetDate.getDate() +
-      " " +
-
-      bulanIndo[targetDate.getMonth()] +
-      " " +
-
-      targetDate.getFullYear();
+      formatTanggalCetak(targetDate);
 
     // ==================================
     // FORMAT NOMOR ANTRIAN
@@ -485,13 +543,19 @@ function daftarAntrian(formData) {
     // SIMPAN DATABASE
     // ==================================
 
+    var nisnValue =
+      normalizeNisnValue(formData.nisn);
+
+    var noHpValue =
+      normalizePhoneValue(formData.no_hp);
+
     dataSheet.appendRow([
 
       new Date(),
 
-      "'" + formData.nisn,
+      "'" + nisnValue,
 
-      "'" + formData.no_hp,
+      "'" + noHpValue,
 
       formData.nama.toUpperCase(),
 
@@ -519,10 +583,10 @@ function daftarAntrian(formData) {
         formData.nama.toUpperCase(),
 
       nisn:
-        formData.nisn,
+        nisnValue,
 
       no_hp:
-        formData.no_hp,
+        noHpValue,
 
       asal:
         formData.asal_sekolah.toUpperCase(),
