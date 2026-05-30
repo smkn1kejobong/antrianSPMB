@@ -256,8 +256,8 @@
 
     .photo-frame {
       border: 1px dashed #000;
-      width: 115px;
-      height: 172px;
+      width: 90px;
+      height: 130px;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -268,8 +268,8 @@
     .text-foto-warna {
       color: #1e40af;
       font-weight: 700;
-      font-size: 10px;
-      line-height: 1.3;
+      font-size: 9px;
+      line-height: 1.2;
       text-transform: uppercase;
       display: block;
     }
@@ -387,14 +387,19 @@
     @media print {
 
       @page {
-        size: 215mm 330mm;
-        margin: 0.4cm 0.5cm;
+        size: A4 portrait;
+        margin: 0.35cm 0.4cm;
       }
 
       body {
         background-color: #fff;
         padding: 0;
         margin: 0;
+      }
+
+      html, body {
+        width: 210mm;
+        height: 297mm;
       }
 
       body * {
@@ -786,14 +791,14 @@
                   </td>
 
                   <td
-                    rowspan="9"
+                    rowspan="3"
                     class="box-foto-container"
                     width="135">
 
                     <div class="photo-frame">
 
                       <span class="text-foto-warna">
-                        PAS FOTO<br>4 x 6
+                        PAS FOTO<br>3 x 4
                       </span>
 
                     </div>
@@ -833,7 +838,119 @@
                 <tr>
 
                   <td class="lbl-left">
-                    NOMOR HP / WA
+                    PILIHAN JURUSAN
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.jurusan1)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    PILIHAN JURUSAN ALTERNATIF
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.jurusan2)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    JENIS KELAMIN
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.jenis_kelamin)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    TEMPAT LAHIR
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.tempat_lahir)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    TANGGAL LAHIR
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.tgl_lahir)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    NOMOR INDUK KEPENDUDUKAN
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.nik)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    AGAMA
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.agama)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    ALAMAT LENGKAP
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.alamat)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    NO. HP / WA AKTIF
                   </td>
 
                   <td class="colon-center">:</td>
@@ -847,7 +964,77 @@
                 <tr>
 
                   <td class="lbl-left">
-                    ASAL SEKOLAH
+                    EMAIL
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.email)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    NOMOR KARTU KELUARGA
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.no_kk)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    PENERIMA KIP
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.penerima_kip)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    NAMA ORANG TUA / WALI (AYAH)
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.nama_ortu)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    NO. HP ORTU / WALI
+                  </td>
+
+                  <td class="colon-center">:</td>
+
+                  <td class="val-right">
+                    ${escapeHtml(row.no_hp_ortu)}
+                  </td>
+
+                </tr>
+
+                <tr>
+
+                  <td class="lbl-left">
+                    SEKOLAH ASAL (SMP ASAL)
                   </td>
 
                   <td class="colon-center">:</td>
@@ -861,7 +1048,7 @@
                 <tr>
 
                   <td class="lbl-left">
-                    NOMOR ANTRIAN
+                    NOMOR ANTRIAN VERIFIKASI
                   </td>
 
                   <td class="colon-center">:</td>

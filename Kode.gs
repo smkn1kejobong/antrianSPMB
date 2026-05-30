@@ -89,6 +89,28 @@ function getSettings() {
   };
 }
 
+function getDataJurusan() {
+  var ss = getSS();
+  var sheet = ss.getSheetByName('DataJurusan');
+  if (!sheet) {
+    throw new Error('Sheet DataJurusan tidak ditemukan!');
+  }
+
+  var values = sheet.getRange(2, 2, sheet.getLastRow(), 2).getValues();
+  var found = {};
+  var options = [];
+
+  for (var i = 0; i < values.length; i++) {
+    var jurusan = String(values[i][0] || '').trim();
+    if (!jurusan) continue;
+    if (found[jurusan]) continue;
+    found[jurusan] = true;
+    options.push(jurusan);
+  }
+
+  return options;
+}
+
 // ==========================================
 // SAVE SETTINGS
 // ==========================================
@@ -259,13 +281,18 @@ function getBatchPrintData() {
     );
   }
 
-  var data = getActiveSheetRows(dataSheet, 10);
+  var data = getActiveSheetRows(dataSheet, 25);
 
   var hasil = [];
 
   for (var i = 0; i < data.length; i++) {
 
     var row = data[i];
+
+    var oldOrtuIdRow = String(row[21] || "").trim().match(/^\d{10,}$/);
+    var namaOrtuIndex = oldOrtuIdRow ? 22 : 21;
+    var noHpOrtuIndex = oldOrtuIdRow ? 23 : 22;
+    var konfirmasiIndex = oldOrtuIdRow ? 24 : 23;
 
     if (!row || row.length === 0) {
       continue;
@@ -306,7 +333,49 @@ function getBatchPrintData() {
         String(row[8]),
 
       sesi:
-        String(row[9])
+        String(row[9]),
+
+      jurusan1:
+        String(row[10]),
+
+      jurusan2:
+        String(row[11]),
+
+      jenis_kelamin:
+        String(row[12]),
+
+      tgl_lahir:
+        formatSheetDate(row[13]),
+
+      nik:
+        String(row[14]),
+
+      agama:
+        String(row[15]),
+
+      tempat_lahir:
+        String(row[16]),
+
+      alamat:
+        String(row[17]),
+
+      email:
+        String(row[18]),
+
+      no_kk:
+        String(row[19]),
+
+      penerima_kip:
+        String(row[20]),
+
+      nama_ortu:
+        String(row[namaOrtuIndex]),
+
+      no_hp_ortu:
+        String(row[noHpOrtuIndex]),
+
+      konfirmasi:
+        String(row[konfirmasiIndex])
 
     });
 
@@ -323,7 +392,7 @@ function searchAntrianByNISN(nisn) {
   var dataSheet =
     ss.getSheetByName("DataAntrian");
 
-  var data = getActiveSheetRows(dataSheet, 10);
+  var data = getActiveSheetRows(dataSheet, 25);
 
   var targetNisn =
     String(nisn).trim();
@@ -331,6 +400,11 @@ function searchAntrianByNISN(nisn) {
   for (var i = 0; i < data.length; i++) {
 
     var row = data[i];
+
+    var oldOrtuIdRow = String(row[21] || "").trim().match(/^\d{10,}$/);
+    var namaOrtuIndex = oldOrtuIdRow ? 22 : 21;
+    var noHpOrtuIndex = oldOrtuIdRow ? 23 : 22;
+    var konfirmasiIndex = oldOrtuIdRow ? 24 : 23;
 
     var sheetNisn =
       String(row[1]).trim();
@@ -369,7 +443,49 @@ function searchAntrianByNISN(nisn) {
           String(row[8]),
 
         sesi:
-          String(row[9])
+          String(row[9]),
+
+        jurusan1:
+          String(row[10]),
+
+        jurusan2:
+          String(row[11]),
+
+        jenis_kelamin:
+          String(row[12]),
+
+        tgl_lahir:
+          formatSheetDate(row[13]),
+
+        nik:
+          String(row[14]),
+
+        agama:
+          String(row[15]),
+
+        tempat_lahir:
+          String(row[16]),
+
+        alamat:
+          String(row[17]),
+
+        email:
+          String(row[18]),
+
+        no_kk:
+          String(row[19]),
+
+        penerima_kip:
+          String(row[20]),
+
+        nama_ortu:
+          String(row[namaOrtuIndex]),
+
+        no_hp_ortu:
+          String(row[noHpOrtuIndex]),
+
+        konfirmasi:
+          String(row[konfirmasiIndex])
 
       };
 
@@ -422,7 +538,23 @@ function daftarAntrian(formData) {
       Number(settings[2][1]);
 
     var data =
-      getActiveSheetRows(dataSheet, 10);
+      getActiveSheetRows(dataSheet, 25);
+
+    var nisnValue =
+      normalizeNisnValue(formData.nisn);
+
+    // ==================================
+    // CEK NISN GANDA
+    // ==================================
+
+    for (var j = 0; j < data.length; j++) {
+      var existingNisn = String(data[j][1] || "").replace(/^'/, "").trim();
+      if (existingNisn === nisnValue) {
+        throw new Error(
+          "NISN " + nisnValue + " sudah terdaftar. Tidak boleh mendaftar 2 kali."
+        );
+      }
+    }
 
     var sekarang =
       new Date();
@@ -549,6 +681,21 @@ function daftarAntrian(formData) {
     var noHpValue =
       normalizePhoneValue(formData.no_hp);
 
+    var noHpOrtuValue =
+      normalizePhoneValue(formData.no_hp_ortu);
+
+    var nikValue =
+      normalizeSheetValue(formData.nik);
+
+    var tempatLahirValue =
+      normalizeSheetValue(formData.tempat_lahir);
+
+    var noKkValue =
+      normalizeSheetValue(formData.no_kk);
+
+    var kipValue =
+      normalizeSheetValue(formData.penerima_kip);
+
     dataSheet.appendRow([
 
       new Date(),
@@ -569,7 +716,35 @@ function daftarAntrian(formData) {
 
       namaLoket,
 
-      sesi
+      sesi,
+
+      formData.jurusan1.toUpperCase(),
+
+      formData.jurusan2.toUpperCase(),
+
+      formData.jenis_kelamin.toUpperCase(),
+
+      formatSheetDate(formData.tgl_lahir),
+
+      "'" + nikValue,
+
+      formData.agama.toUpperCase(),
+
+      tempatLahirValue.toUpperCase(),
+
+      formData.alamat.toUpperCase(),
+
+      formData.email.toLowerCase(),
+
+      "'" + noKkValue,
+
+      kipValue.toUpperCase(),
+
+      formData.nama_ortu.toUpperCase(),
+
+      "'" + noHpOrtuValue,
+
+      formData.konfirmasi
 
     ]);
 
@@ -601,7 +776,49 @@ function daftarAntrian(formData) {
         namaLoket,
 
       sesi:
-        sesi
+        sesi,
+
+      jurusan1:
+        formData.jurusan1.toUpperCase(),
+
+      jurusan2:
+        formData.jurusan2.toUpperCase(),
+
+      jenis_kelamin:
+        formData.jenis_kelamin.toUpperCase(),
+
+      tgl_lahir:
+        formatSheetDate(formData.tgl_lahir),
+
+      nik:
+        nikValue,
+
+      agama:
+        formData.agama.toUpperCase(),
+
+      tempat_lahir:
+        formData.tempat_lahir.toUpperCase(),
+
+      alamat:
+        formData.alamat.toUpperCase(),
+
+      email:
+        formData.email.toLowerCase(),
+
+      no_kk:
+        noKkValue,
+
+      penerima_kip:
+        kipValue.toUpperCase(),
+
+      nama_ortu:
+        formData.nama_ortu.toUpperCase(),
+
+      no_hp_ortu:
+        noHpOrtuValue,
+
+      konfirmasi:
+        formData.konfirmasi
 
     };
 
