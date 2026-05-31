@@ -110,6 +110,8 @@
       <!-- keep nisn & nik as hidden locked values -->
       <input type="hidden" name="nisn">
       <input type="hidden" name="nik">
+      <input type="hidden" name="jurusan1">
+      <input type="hidden" name="jurusan2">
 
       <div class="form-group">
         <label>Nama Lengkap Calon Murid</label>
@@ -118,14 +120,6 @@
       <div class="form-group">
         <label>Nomor HP/WA Siswa (Aktif)</label>
         <input type="text" name="no_hp" inputmode="numeric" pattern="[0-9]{10,14}" maxlength="14" placeholder="Masukkan nomor HP siswa" required oninput="this.value=this.value.replace(/[^0-9+]/g,'');">
-      </div>
-      <div class="form-group">
-        <label>Jurusan Pilihan 1 (Utama)</label>
-        <select id="jurusan1" name="jurusan1" required></select>
-      </div>
-      <div class="form-group">
-        <label>Jurusan Pilihan 2 (Alternatif)</label>
-        <select id="jurusan2" name="jurusan2"></select>
       </div>
       <div class="form-group">
         <label>Jenis Kelamin</label>
@@ -198,27 +192,10 @@
         <button id="btnUpdate" type="submit">Perbarui Data</button>
       </div>
     </form>
-    <div style="margin-top:8px"><button onclick="window.location.href='?page=updatebynisnandnik'" style="background:#dc2626">BATAL / KEMBALI</button></div>
+    <div style="margin-top:8px"><button onclick="window.location.href='/update'" style="background:#dc2626">BATAL / KEMBALI</button></div>
   </div>
 
   <script>
-    // populate jurusan options (reuse existing server function)
-    function populateJurusanOptions() {
-      google.script.run.withSuccessHandler(options => {
-        if (!Array.isArray(options)) return;
-        const primary = document.getElementById('jurusan1');
-        const alternate = document.getElementById('jurusan2');
-        primary.innerHTML = '<option value="">-- Pilih Jurusan Utama --</option>';
-        alternate.innerHTML = '<option value="">-- Pilih Jurusan Alternatif --</option>';
-        options.forEach(j => {
-          const opt1 = document.createElement('option'); opt1.value = j; opt1.text = j; primary.appendChild(opt1);
-          const opt2 = document.createElement('option'); opt2.value = j; opt2.text = j; alternate.appendChild(opt2);
-        });
-      }).getDataJurusan();
-    }
-
-    window.addEventListener('DOMContentLoaded', populateJurusanOptions);
-
     function searchByNisnNik(f) {
       document.getElementById('btnSearch').disabled = true;
       document.getElementById('btnSearch').innerText = 'MENCARI...';
@@ -252,6 +229,8 @@
         const editForm = document.getElementById('fEdit');
         editForm.nisn.value = res.nisn;
         editForm.nik.value = res.nik;
+        editForm.jurusan1.value = res.jurusan1;
+        editForm.jurusan2.value = res.jurusan2;
 
         // populate form fields
         editForm.nama.value = res.nama || '';
