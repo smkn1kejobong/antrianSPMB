@@ -173,6 +173,27 @@
     .btn-back { background-color: #dc2626; color: white; margin-left: 10px; }
     .btn-back:hover { background-color: #b91c1c; }
 
+    /* Responsive Layout */
+    html { font-size: 15px; }
+    body { padding: 14px; }
+    .container { width: min(100%, 520px); margin: 24px auto; padding: 24px; }
+    input, select, textarea { font-size: 15px; }
+    #printArea, .main-border-box { width: 100%; overflow-x: auto; }
+    .data-table, .ceklis-table, .ttd-grid { width: 100%; min-width: 100%; }
+    .data-table td, .ceklis-table th, .ceklis-table td { word-break: break-word; }
+
+    @media (max-width: 520px) {
+      body { padding: 10px; }
+      .container { margin: 10px auto; padding: 20px; }
+      .form-header h2 { font-size: 22px; }
+      .form-header p { font-size: 14px; }
+      .form-group { margin-bottom: 16px; }
+      input, select, textarea { padding: 12px; }
+      button#btn, .btn-action { font-size: 14px; }
+      .box-part { font-size: 10px; padding: 2px 6px; }
+      .photo-frame { width: 72px; height: 104px; }
+    }
+
     /* Pengaturan Cetak A4 */
     @media print {
       @page { size: A4 portrait; margin: 0.35cm 0.4cm; }
@@ -319,7 +340,7 @@
                required>
       </div>
       <div class="form-group">
-        <label>Nama Orang Tua/Wali</label>
+        <label>Nama Orang Tua/Wali (Ayah)</label>
         <input type="text" 
                name="nama_ortu" 
                placeholder="Masukkan nama orang tua/wali" 
@@ -354,11 +375,6 @@
 
   <!-- AREA TICKETING / PRINT PREVIEW -->
   <div id="printArea">
-    
-    <div class="print-logo-header">
-      <img src="LOGO_SEKOLAH.png" alt="Logo Sekolah" class="logo-img">
-    </div>
-
     <div class="main-border-box">
       <div class="title-area">
         DAFTAR VERIFIKASI KELENGKAPAN DOKUMEN/BERKAS SPMB SMA NEGERI/SMK NEGERI<br>
@@ -415,16 +431,6 @@
           <td class="val-right"><span id="pTglLahir"></span></td>
         </tr>
         <tr>
-          <td class="lbl-left">NOMOR INDUK KEPENDUDUKAN</td>
-          <td class="colon-center">:</td>
-          <td class="val-right"><span id="pNik"></span></td>
-        </tr>
-        <tr>
-          <td class="lbl-left">AGAMA</td>
-          <td class="colon-center">:</td>
-          <td class="val-right"><span id="pAgama"></span></td>
-        </tr>
-        <tr>
           <td class="lbl-left">ALAMAT LENGKAP</td>
           <td class="colon-center">:</td>
           <td class="val-right"><span id="pAlamat"></span></td>
@@ -438,11 +444,6 @@
           <td class="lbl-left">EMAIL</td>
           <td class="colon-center">:</td>
           <td class="val-right"><span id="pEmail"></span></td>
-        </tr>
-        <tr>
-          <td class="lbl-left">NOMOR KARTU KELUARGA</td>
-          <td class="colon-center">:</td>
-          <td class="val-right"><span id="pKK"></span></td>
         </tr>
         <tr>
           <td class="lbl-left">PENERIMA KIP</td>
@@ -513,7 +514,7 @@
     <table class="ttd-grid">
       <tr>
         <td>Orang Tua/Wali,<br><div class="ttd-space"></div>( ............................................ )</td>
-        <td>........................., Juni 2026<br>Calon Murid,<br><div class="ttd-space"></div>( <b><span id="p1_ttd"></span></b> )</td>
+        <td><span id="p4"></span><br>Calon Murid,<br><div class="ttd-space"></div>( <b><span id="p1_ttd"></span></b> )</td>
       </tr>
       <tr>
         <td>Mengetahui,<br>Ketua Panitia<br><div class="ttd-space"></div>( <b>________________________ </b>)<br>NIP.-</td>
@@ -618,12 +619,12 @@
           document.getElementById('p2').innerText = res.nisn;
           document.getElementById('pTempatLahir').innerText = res.tempat_lahir;
           document.getElementById('pTglLahir').innerText = res.tgl_lahir;
-          document.getElementById('pNik').innerText = res.nik;
-          document.getElementById('pAgama').innerText = res.agama;
+          // document.getElementById('pNik').innerText = res.nik;
+          // document.getElementById('pAgama').innerText = res.agama;
           document.getElementById('pAlamat').innerText = res.alamat;
           document.getElementById('p_hp').innerText = res.no_hp;
           document.getElementById('pEmail').innerText = res.email;
-          document.getElementById('pKK').innerText = res.no_kk;
+          // document.getElementById('pKK').innerText = res.no_kk;
           document.getElementById('pKIP').innerText = res.penerima_kip;
           document.getElementById('pNamaOrtu').innerText = res.nama_ortu;
           document.getElementById('pHpOrtu').innerText = res.no_hp_ortu;

@@ -449,6 +449,68 @@
         print-color-adjust: exact;
       }
     }
+
+    /* Responsive Layout */
+    html { font-size: 15px; }
+    body { padding: 14px; }
+    .toolbar { max-width: 100%; padding: 8px; box-sizing: border-box; }
+    .list-container { max-width: 100%; }
+    .list-header, .list-row { grid-auto-columns: 1fr; grid-auto-flow: column; }
+    #printContainer { max-width: 100%; padding: 0 8px; box-sizing: border-box; }
+    .main-border-box { width: 100%; overflow-x: auto; }
+    .data-table, .ceklis-table, .ttd-grid { width: 100%; min-width: 0; }
+    .data-table td, .ceklis-table th, .ceklis-table td { word-break: break-word; }
+
+    /* Tablet: reduce some columns and allow horizontal scrolling */
+    @media (max-width: 1100px) {
+      .list-header, .list-row {
+        grid-template-columns: 60px 120px 1fr 120px 120px 80px;
+      }
+      .toolbar { gap: 10px; }
+    }
+
+    /* Small screens: stack and hide less important columns */
+    @media (max-width: 760px) {
+      .toolbar { flex-direction: column; align-items: stretch; gap: 8px; }
+      .toolbar h1 { font-size: 18px; }
+      .list-header, .list-row {
+        grid-template-columns: 60px 120px 1fr 80px;
+        grid-auto-rows: minmax(36px, auto);
+        align-items: center;
+      }
+      /* hide: ASAL SEKOLAH, NOMOR, LOKET on narrow screens to keep layout readable */
+      .list-header div:nth-child(4),
+      .list-header div:nth-child(5),
+      .list-header div:nth-child(6),
+      .list-row div:nth-child(4),
+      .list-row div:nth-child(5),
+      .list-row div:nth-child(6) {
+        display: none;
+      }
+      .action-group { justify-content: flex-end; }
+      .btn-small { padding: 6px 8px; }
+    }
+
+    /* Mobile: compact spacing, slightly smaller text */
+    @media (max-width: 520px) {
+      body { padding: 10px; }
+      .toolbar h1 { font-size: 16px; }
+      .toolbar p { font-size: 13px; }
+      .list-row { padding: 10px; gap: 8px; font-size: 13px; }
+      .list-header { display: none; }
+      /* Render rows as stacked blocks for best readability */
+      .list-row {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto;
+        gap: 6px;
+      }
+      .list-row > div { width: 100%; }
+      .list-row > div:nth-child(1) { font-weight: 700; }
+      .list-row > div:nth-child(7) { justify-self: end; }
+      .action-group { gap: 6px; }
+    }
+
   </style>
 </head>
 
@@ -478,17 +540,17 @@
 
     const berkasJateng = [
       "Asli Buku Rapor SMP/sederajat.",
-      "Asli Surat Keterangan Nilai Rapor Semester 1 sampai Semester 5.",
-      "Asli Sertifikat Hasil Tes Kemampuan Akademik.",
-      "Asli Ijazah / SKL.",
-      "Asli Akta Kelahiran.",
-      "Asli Kartu Keluarga.",
-      "Asli surat penugasan.",
-      "Asli Surat Pernyataan Kepala Sekolah.",
-      "Asli Surat Keterangan Domisili.",
-      "Asli piagam prestasi.",
-      "Asli Surat Keterangan Ketua OSIS.",
-      "Asli Surat Keterangan Sehat."
+      "Asli Surat Keterangan Nilai Rapor Semester 1 (satu) sampai dengan Semester 5 (lima) SMP/sederajat yang diterbitkan oleh Satuan Pendidikan yang bersangkutan.",
+      "Asli Sertifikat Hasil Tes Kemampuan Akademik (TKA) SMP/sederajat atau copy Daftar Kolektif Hasil Tes Kemampuan Akademik (DKHTKA).",
+      "Asli Ijazah SMP/sederajat / Surat Keterangan yang berpenghargaan sama dengan ijazah SMP/ijazah Program Paket B/Ijazah Satuan Pendidikan Luar Negeri atau Asli Surat Keterangan Lulus (SKL).",
+      "Asli Akta Kelahiran dengan batas usia paling tinggi 21 (dua puluh satu) tahun terhitung pada tanggal 1 Juli 2026, dan belum menikah.",
+      "Asli Kartu Keluarga yang diterbitkan dan/atau telah tinggal paling singkat 1 (satu) tahun sebelum tanggal pendaftaran SPMB (Tanggal 14 Juni 2026).",
+      "Asli surat penugasan dari instansi pemerintah/lembaga negara/BUMN/BUMD/khusus perusahaan swasta yang berbadan hukum (Bagi jalur perpindahan tugas orang tua).",
+      "Asli Surat Pernyataan dari Kepala Sekolah bagi calon murid yang merupakan anak guru.",
+      "Asli Surat Keterangan Domisili/surat keterangan bertempat tinggal yang diterbitkan oleh lurah/kepala desa dan diketahui oleh camat (Bagi jalur mutasi).",
+      "Asli piagam prestasi/kejuaraan sesuai piagam yang diunggah pada saat ajuan akun bagi Calon Murid yang memiliki.",
+      "Asli Surat Keterangan Kepala Sekolah SMP/sederajat yang berisi keterangan bahwa calon murid pernah menjadi Ketua OSIS/OSIM/MPK/Pratama Pramuka.",
+      "Asli Surat Keterangan Sehat dari dokter Pemerintah atau Asli Surat Pernyataan Sehat / Asli Surat Pernyataan Tidak buta Warna dari calon murid yang diketahui orang tua."
     ];
 
     let globalRows = [];
@@ -748,15 +810,6 @@
         return `
 
           <section class="print-page">
-
-            <div class="print-logo-header">
-
-              <img
-                src="LOGO_SEKOLAH.png"
-                class="logo-img">
-
-            </div>
-
             <div class="main-border-box">
 
               <div class="title-area">
@@ -908,34 +961,6 @@
                 <tr>
 
                   <td class="lbl-left">
-                    NOMOR INDUK KEPENDUDUKAN
-                  </td>
-
-                  <td class="colon-center">:</td>
-
-                  <td class="val-right">
-                    ${escapeHtml(row.nik)}
-                  </td>
-
-                </tr>
-
-                <tr>
-
-                  <td class="lbl-left">
-                    AGAMA
-                  </td>
-
-                  <td class="colon-center">:</td>
-
-                  <td class="val-right">
-                    ${escapeHtml(row.agama)}
-                  </td>
-
-                </tr>
-
-                <tr>
-
-                  <td class="lbl-left">
                     ALAMAT LENGKAP
                   </td>
 
@@ -971,20 +996,6 @@
 
                   <td class="val-right">
                     ${escapeHtml(row.email)}
-                  </td>
-
-                </tr>
-
-                <tr>
-
-                  <td class="lbl-left">
-                    NOMOR KARTU KELUARGA
-                  </td>
-
-                  <td class="colon-center">:</td>
-
-                  <td class="val-right">
-                    ${escapeHtml(row.no_kk)}
                   </td>
 
                 </tr>
@@ -1088,7 +1099,11 @@
                   </td>
 
                 </tr>
-
+                <tr>
+                  <td class="lbl-left" style="border-bottom:none;">JALUR YANG DAPAT DIGUNAKAN UNTUK PENDAFTARAN/PEMILIHAN SEKOLAH</td>
+                  <td class="colon-center" style="border-bottom:none;">:</td>
+                  <td class="val-right" colspan="2" style="border-bottom:none;">..........................................................................................</td>
+                </tr>
               </table>
 
             </div>

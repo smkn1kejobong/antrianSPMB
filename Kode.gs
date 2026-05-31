@@ -16,6 +16,8 @@ function doGet(e) {
     page = "BatchPrint";
   } else if (requestedPage == "searchbynisn") {
     page = "SearchByNISN";
+  } else if (requestedPage == "updatebynisnandnik") {
+    page = "UpdateByNISNandNIK";
   }
 
   var template =
@@ -325,7 +327,7 @@ function getBatchPrintData() {
         String(tglCetak),
 
       nomor:
-        String(row[6]),
+        String(row[6]).padStart(3, '0'),
 
       tanggal: tanggal,
 
@@ -434,7 +436,7 @@ function searchAntrianByNISN(nisn) {
           String(tglCetak),
 
         nomor:
-          String(row[6]),
+          String(row[6]).padStart(3, '0'),
 
         tanggal:
           formatSheetDate(row[7]),
@@ -830,6 +832,110 @@ function daftarAntrian(formData) {
       err.message
     );
 
+  }
+
+}
+
+// ==========================================
+// UPDATE BY NISN + NIK
+// ==========================================
+
+function updateByNISNandNIK(formData) {
+
+  try {
+    var ss = getSS();
+    var dataSheet = ss.getSheetByName('DataAntrian');
+
+    if (!dataSheet) {
+      throw new Error('Sheet DataAntrian tidak ditemukan!');
+    }
+
+    var data = getActiveSheetRows(dataSheet, 25);
+
+    var targetNisn = normalizeNisnValue(formData.nisn);
+    var targetNik = normalizeSheetValue(formData.nik);
+
+    var foundIndex = -1;
+
+    for (var i = 0; i < data.length; i++) {
+      var row = data[i];
+      var sheetNisn = normalizeNisnValue(row[1]);
+      var sheetNik = normalizeSheetValue(row[14]);
+
+      if (sheetNisn === targetNisn && sheetNik === targetNik) {
+        foundIndex = i;
+        break;
+      }
+    }
+
+    if (foundIndex === -1) {
+      throw new Error('Data dengan NISN/NIK tersebut tidak ditemukan.');
+    }
+
+    var rowNumber = foundIndex + 2; // because getActiveSheetRows starts at row 2
+
+    // normalize values to store
+    var nisnValue = normalizeNisnValue(formData.nisn);
+    var noHpValue = normalizePhoneValue(formData.no_hp);
+    var noHpOrtuValue = normalizePhoneValue(formData.no_hp_ortu);
+    var nikValue = normalizeSheetValue(formData.nik);
+    var noKkValue = normalizeSheetValue(formData.no_kk);
+    var kipValue = normalizeSheetValue(formData.penerima_kip);
+
+    // update relevant columns (keep createdAt, nomor, tglCetak, loket, sesi unchanged)
+    dataSheet.getRange(rowNumber, 3).setValue("'" + noHpValue); // column C
+    dataSheet.getRange(rowNumber, 4).setValue(formData.nama.toUpperCase()); // D
+    dataSheet.getRange(rowNumber, 5).setValue(formData.asal_sekolah.toUpperCase()); // E
+    dataSheet.getRange(rowNumber, 11).setValue(formData.jurusan1.toUpperCase()); // K
+    dataSheet.getRange(rowNumber, 12).setValue(formData.jurusan2.toUpperCase()); // L
+    dataSheet.getRange(rowNumber, 13).setValue(formData.jenis_kelamin.toUpperCase()); // M
+    dataSheet.getRange(rowNumber, 14).setValue(formatSheetDate(formData.tgl_lahir)); // N
+    dataSheet.getRange(rowNumber, 15).setValue("'" + nikValue); // O
+    dataSheet.getRange(rowNumber, 16).setValue(formData.agama.toUpperCase()); // P
+    dataSheet.getRange(rowNumber, 17).setValue(formData.tempat_lahir.toUpperCase()); // Q
+    dataSheet.getRange(rowNumber, 18).setValue(formData.alamat.toUpperCase()); // R
+    dataSheet.getRange(rowNumber, 19).setValue(formData.email.toLowerCase()); // S
+    dataSheet.getRange(rowNumber, 20).setValue("'" + noKkValue); // T
+    dataSheet.getRange(rowNumber, 21).setValue(kipValue.toUpperCase()); // U
+    dataSheet.getRange(rowNumber, 22).setValue(formData.nama_ortu.toUpperCase()); // V
+    dataSheet.getRange(rowNumber, 23).setValue("'" + noHpOrtuValue); // W
+    dataSheet.getRange(rowNumber, 24).setValue(formData.konfirmasi); // X
+
+    // return updated record for client
+    var updatedRow = dataSheet.getRange(rowNumber, 1, 1, 25).getValues()[0];
+
+    var tglCetak = formatTanggalCetak(updatedRow[5]);
+
+    return {
+      createdAt: formatSheetDateTime(updatedRow[0]),
+      nisn: String(updatedRow[1]).replace(/^'/, ""),
+      no_hp: String(updatedRow[2]).replace(/^'/, ""),
+      nama: String(updatedRow[3]),
+      asal: String(updatedRow[4]),
+      hari: tglCetak,
+      nomor: String(updatedRow[6]).padStart(3, '0'),
+      tanggal: formatSheetDate(updatedRow[7]),
+      loket: String(updatedRow[8]),
+      sesi: String(updatedRow[9]),
+      jurusan1: String(updatedRow[10]),
+      jurusan2: String(updatedRow[11]),
+      jenis_kelamin: String(updatedRow[12]),
+      tgl_lahir: formatSheetDate(updatedRow[13]),
+      nik: String(updatedRow[14]).replace(/^'/, ""),
+      agama: String(updatedRow[15]),
+      tempat_lahir: String(updatedRow[16]),
+      alamat: String(updatedRow[17]),
+      email: String(updatedRow[18]),
+      no_kk: String(updatedRow[19]).replace(/^'/, ""),
+      penerima_kip: String(updatedRow[20]),
+      nama_ortu: String(updatedRow[21]),
+      no_hp_ortu: String(updatedRow[22]).replace(/^'/, ""),
+      konfirmasi: String(updatedRow[23])
+    };
+
+  }
+  catch (err) {
+    throw new Error('Gagal memperbarui data: ' + err.message);
   }
 
 }

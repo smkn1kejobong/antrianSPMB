@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPMB 2026 - Update Data</title>
+  <style>
+    /* Base & Accessibility */
+    * { box-sizing: border-box; }
+    html { font-size: 15px; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 14px;
+      line-height: 1.3;
+      color: #1e293b;
+      background: #f0f4f8;
+      font-size: 12px;
+    }
+
+    /* Container & Header */
+    .container {
+      max-width: 520px;
+      width: min(100%, 520px);
+      margin: 24px auto;
+      padding: 24px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(37, 99, 235, 0.04);
+    }
+    .form-header { text-align: center; margin-bottom: 18px; }
+    .logo-img { width: 60px; height: auto; margin-bottom: 8px; }
+
+    /* Form controls */
+    .form-group { margin-bottom: 14px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; color: #334155; }
+    input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 15px;
+      background: #f8fafc;
+      transition: all 0.16s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      background-color: #fff;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+    }
+
+    button {
+      background: #2563eb;
+      color: #fff;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      width: 100%;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 15px;
+    }
+    button:hover { background: #1d4ed8; }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
+
+    .note-text { font-size: 13px; color: #334155; margin-top: 8px; }
+    .hidden { display: none; }
+
+    /* Mobile adjustments */
+    @media (max-width: 520px) {
+      body { padding: 10px; }
+      .container { margin: 10px auto; padding: 20px; }
+      .form-header h2 { font-size: 22px; }
+      .form-header p { font-size: 14px; }
+      .form-group { margin-bottom: 12px; }
+      input, select, textarea { padding: 12px; font-size: 15px; }
+      button { font-size: 14px; padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="searchArea" class="container">
+    <div class="form-header">
+      <img src="LOGO_SEKOLAH.png" alt="Logo" class="logo-img">
+      <h2>Update Data SPMB</h2>
+      <p><?= namaSekolah ?></p>
+    </div>
+    <form id="fSearch" onsubmit="searchByNisnNik(this); return false;">
+      <div class="form-group">
+        <label>NISN</label>
+        <input type="text" name="nisn" inputmode="numeric" maxlength="10" placeholder="Masukkan NISN" required oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+      </div>
+      <div class="form-group">
+        <label>NIK</label>
+        <input type="text" name="nik" inputmode="numeric" maxlength="16" placeholder="Masukkan NIK" required oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+      </div>
+      <button id="btnSearch" type="submit">Cari Data</button>
+    </form>
+  </div>
+
+  <div id="editArea" class="container hidden">
+    <div class="form-header">
+      <img src="LOGO_SEKOLAH.png" alt="Logo" class="logo-img">
+      <h2>Perbarui Data</h2>
+      <p><?= namaSekolah ?></p>
+    </div>
+
+    <form id="fEdit" onsubmit="submitUpdate(this); return false;">
+      <!-- keep nisn & nik as hidden locked values -->
+      <input type="hidden" name="nisn">
+      <input type="hidden" name="nik">
+
+      <div class="form-group">
+        <label>Nama Lengkap Calon Murid</label>
+        <input type="text" name="nama" placeholder="Masukkan nama" required>
+      </div>
+      <div class="form-group">
+        <label>Nomor HP/WA Siswa (Aktif)</label>
+        <input type="text" name="no_hp" inputmode="numeric" pattern="[0-9]{10,14}" maxlength="14" placeholder="Masukkan nomor HP siswa" required oninput="this.value=this.value.replace(/[^0-9+]/g,'');">
+      </div>
+      <div class="form-group">
+        <label>Jurusan Pilihan 1 (Utama)</label>
+        <select id="jurusan1" name="jurusan1" required></select>
+      </div>
+      <div class="form-group">
+        <label>Jurusan Pilihan 2 (Alternatif)</label>
+        <select id="jurusan2" name="jurusan2"></select>
+      </div>
+      <div class="form-group">
+        <label>Jenis Kelamin</label>
+        <select name="jenis_kelamin" required>
+          <option value="">-- Pilih Jenis Kelamin --</option>
+          <option value="LAKI-LAKI">Laki-laki</option>
+          <option value="PEREMPUAN">Perempuan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tempat Lahir</label>
+        <input type="text" name="tempat_lahir" placeholder="Contoh: Purbalingga" required>
+      </div>
+      <div class="form-group">
+        <label>Tanggal Lahir</label>
+        <input type="date" name="tgl_lahir" required>
+      </div>
+      <div class="form-group">
+        <label>Agama</label>
+        <select name="agama" required>
+          <option value="">-- Pilih Agama --</option>
+          <option>ISLAM</option>
+          <option>KRISTEN</option>
+          <option>KATOLIK</option>
+          <option>HINDU</option>
+          <option>BUDDHA</option>
+          <option>KHONGHUCU</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Alamat Lengkap</label>
+        <textarea name="alamat" rows="3" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="Masukkan email aktif">
+      </div>
+      <div class="form-group">
+        <label>Nomor Kartu Keluarga</label>
+        <input type="text" name="no_kk" inputmode="numeric" maxlength="30" placeholder="Nomor Kartu Keluarga" oninput="this.value=this.value.replace(/[^0-9]/g,'');">
+      </div>
+      <div class="form-group">
+        <label>Penerima KIP</label>
+        <select name="penerima_kip" required>
+          <option value="">-- Pilih --</option>
+          <option value="YA">YA</option>
+          <option value="TIDAK">TIDAK</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nama Orang Tua/Wali (Ayah)</label>
+        <input type="text" name="nama_ortu" placeholder="Nama orang tua/wali" required>
+      </div>
+      <div class="form-group">
+        <label>Nomor HP/WA Orang Tua</label>
+        <input type="text" name="no_hp_ortu" inputmode="numeric" pattern="[0-9]{10,14}" maxlength="14" placeholder="Nomor HP orang tua" oninput="this.value=this.value.replace(/[^0-9+]/g,'');">
+      </div>
+      <div class="form-group">
+        <label>Sekolah Asal (SMP Asal)</label>
+        <input type="text" name="asal_sekolah" placeholder="Masukkan sekolah asal" required>
+      </div>
+      <div class="form-group">
+        <label style="display: flex; align-items: center; cursor: pointer;">
+          <input type="checkbox" name="konfirmasi" value="YA" required style="width: auto; margin-right: 8px;">
+          Saya mengkonfirmasi bahwa data di atas sudah benar dan sesuai
+        </label>
+      </div>
+
+      <div style="margin-top:12px">
+        <button id="btnUpdate" type="submit">Perbarui Data</button>
+      </div>
+    </form>
+    <div style="margin-top:8px"><button onclick="window.location.href='?page=updatebynisnandnik'" style="background:#dc2626">BATAL / KEMBALI</button></div>
+  </div>
+
+  <script>
+    // populate jurusan options (reuse existing server function)
+    function populateJurusanOptions() {
+      google.script.run.withSuccessHandler(options => {
+        if (!Array.isArray(options)) return;
+        const primary = document.getElementById('jurusan1');
+        const alternate = document.getElementById('jurusan2');
+        primary.innerHTML = '<option value="">-- Pilih Jurusan Utama --</option>';
+        alternate.innerHTML = '<option value="">-- Pilih Jurusan Alternatif --</option>';
+        options.forEach(j => {
+          const opt1 = document.createElement('option'); opt1.value = j; opt1.text = j; primary.appendChild(opt1);
+          const opt2 = document.createElement('option'); opt2.value = j; opt2.text = j; alternate.appendChild(opt2);
+        });
+      }).getDataJurusan();
+    }
+
+    window.addEventListener('DOMContentLoaded', populateJurusanOptions);
+
+    function searchByNisnNik(f) {
+      document.getElementById('btnSearch').disabled = true;
+      document.getElementById('btnSearch').innerText = 'MENCARI...';
+
+      const nisn = f.nisn.value;
+      const nik = f.nik.value;
+
+      google.script.run.withSuccessHandler(res => {
+        if (!res) {
+          alert('Data tidak ditemukan.');
+          document.getElementById('btnSearch').disabled = false;
+          document.getElementById('btnSearch').innerText = 'Cari Data';
+          return;
+        }
+
+        // verify NIK matches
+        var sheetNik = (res.nik || '').toString().replace(/^'/, '');
+        if (sheetNik !== nik) {
+          alert('NIK tidak cocok dengan data NISN tersebut. Proses dibatalkan.');
+          document.getElementById('btnSearch').disabled = false;
+          document.getElementById('btnSearch').innerText = 'Cari Data';
+          return;
+        }
+
+        // hide search area and show edit form
+        document.getElementById('searchArea').style.display = 'none';
+        document.getElementById('editArea').style.display = 'block';
+        document.getElementById('editArea').classList.remove('hidden');
+
+        // fill hidden keys
+        const editForm = document.getElementById('fEdit');
+        editForm.nisn.value = res.nisn;
+        editForm.nik.value = res.nik;
+
+        // populate form fields
+        editForm.nama.value = res.nama || '';
+        editForm.no_hp.value = res.no_hp || '';
+        editForm.asal_sekolah.value = res.asal || '';
+        editForm.jurusan1.value = res.jurusan1 || '';
+        editForm.jurusan2.value = res.jurusan2 || '';
+        editForm.jenis_kelamin.value = res.jenis_kelamin || '';
+        editForm.tempat_lahir.value = res.tempat_lahir || '';
+        editForm.tgl_lahir.value = res.tgl_lahir ? (function(v){
+          // try to convert dd/MM/yyyy to yyyy-mm-dd if needed
+          var parts = v.split('/'); if (parts.length===3) return parts[2]+'-'+parts[1]+'-'+parts[0]; return v;
+        })(res.tgl_lahir) : '';
+        editForm.agama.value = res.agama || '';
+        editForm.alamat.value = res.alamat || '';
+        editForm.email.value = res.email || '';
+        editForm.no_kk.value = res.no_kk || '';
+        editForm.penerima_kip.value = res.penerima_kip || '';
+        editForm.nama_ortu.value = res.nama_ortu || '';
+        editForm.no_hp_ortu.value = res.no_hp_ortu || '';
+        editForm.konfirmasi.value = res.konfirmasi || '';
+
+        document.getElementById('btnSearch').disabled = false;
+        document.getElementById('btnSearch').innerText = 'Cari Data';
+
+      }).withFailureHandler(err => {
+        alert(err.message || 'Terjadi kesalahan saat mencari data.');
+        document.getElementById('btnSearch').disabled = false;
+        document.getElementById('btnSearch').innerText = 'Cari Data';
+      }).searchAntrianByNISN(nisn);
+    }
+
+    function submitUpdate(f) {
+      document.getElementById('btnUpdate').disabled = true;
+      document.getElementById('btnUpdate').innerText = 'MENGUPDATE...';
+
+      google.script.run.withSuccessHandler(res => {
+        alert('Data berhasil diperbarui.');
+        // optionally redirect back or show updated print
+        document.getElementById('btnUpdate').disabled = false;
+        document.getElementById('btnUpdate').innerText = 'Perbarui Data';
+        // go back to start
+        window.location.href = '?page=updatebynisnandnik';
+      }).withFailureHandler(err => {
+        alert(err.message || 'Gagal memperbarui data.');
+        document.getElementById('btnUpdate').disabled = false;
+        document.getElementById('btnUpdate').innerText = 'Perbarui Data';
+      }).updateByNISNandNIK(f);
+
+    }
+  </script>
+</body>
+</html>
