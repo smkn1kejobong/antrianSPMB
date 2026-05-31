@@ -195,3 +195,42 @@ Fitur yang tersedia:
 - Google Spreadsheet
 - HTML, CSS, JavaScript
 - Google Web App
+
+---
+
+## 📘 Tutorial Singkat Penggunaan
+
+1. Siapkan Spreadsheet
+  - Buat spreadsheet baru di Google Drive dan tambahkan sheet: `Settings`, `DataJurusan`, `DataAntrian`.
+  - Isi `Settings` minimal: `tanggalMulai`, `kuotaHarian`, `jumlahOperator`, `namaSekolah`, `footerTeks`.
+
+2. Upload ke Apps Script dan konfigurasikan
+  - Dari spreadsheet buka **Extensions > Apps Script**.
+  - Tambahkan/unggah file `Kode.gs`, `Index.html`, `Admin.html`, `SearchByNISN.html`, `BatchPrint.html`.
+  - Ganti `SpreadsheetApp.openById("SPREADSHEET_ID")` di `Kode.gs` dengan ID spreadsheet Anda.
+
+3. Deploy Web App
+  - Klik **Deploy > New deployment** → pilih **Web app**.
+  - Atur **Execute as: Me** dan **Who has access: Anyone** lalu Deploy.
+  - Salin URL hasil deploy untuk diakses pengguna dan admin.
+
+4. Alur Pendaftaran Peserta (contoh penggunaan)
+  - Buka halaman pendaftaran (URL `exec`).
+  - Peserta mengisi formulir lengkap, lalu klik **Submit**.
+  - Sistem akan menampilkan preview form verifikasi—cetak jika perlu.
+  - Data peserta tersimpan otomatis di sheet `DataAntrian`.
+
+5. Verifikasi oleh Petugas
+  - Buka halaman pencarian NISN (URL dengan `?page=searchbynisn`).
+  - Masukkan NISN untuk melihat data peserta; gunakan tombol verifikasi dan cetak form jika valid.
+
+6. Cetak Massal (Batch Print)
+  - Buka halaman batch print (URL dengan `?page=batchprint`).
+  - Gunakan fitur `Cetak Semua` untuk mencetak seluruh daftar, atau `Preview` → `Cetak` per peserta.
+
+7. Tips & Troubleshooting Singkat
+  - Pastikan `Settings` terisi dan nama sheet sesuai.
+  - Jika halaman pendaftaran error, cek `DataJurusan` untuk daftar jurusan di kolom B mulai baris 2.
+  - Untuk kesalahan otorisasi saat deploy, periksa pengaturan akses Web App dan akun yang dipakai untuk deploy.
+
+Jika Anda ingin, saya bisa menambahkan screenshot, contoh data `Settings`, atau flow diagram singkat ke `README.md`.

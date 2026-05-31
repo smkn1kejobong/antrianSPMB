@@ -555,7 +555,7 @@
 
     let globalRows = [];
     let currentPage = 1;
-    const rowsPerPage = 10;
+    const rowsPerPage = 50;
 
     function escapeHtml(text) {
 
@@ -712,7 +712,14 @@
 
     function printAll() {
 
-      openPrintWindow(globalRows, true);
+      const startIndex = (currentPage - 1) * rowsPerPage;
+
+      const pageRows = globalRows.slice(
+        startIndex,
+        startIndex + rowsPerPage
+      );
+
+      openPrintWindow(pageRows, true);
 
     }
 

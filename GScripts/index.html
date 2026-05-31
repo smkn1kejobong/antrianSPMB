@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPMB 2026 - SMK Negeri</title>
+  <style>
+    /* Global Styles & Modern Typography */
+    * { box-sizing: border-box; }
+    body { 
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+      margin: 0; 
+      padding: 20px; 
+      line-height: 1.3; 
+      color: #1e293b; 
+      background-color: #f0f4f8;
+      font-size: 12px; 
+    }
+
+    /* Container Form Area (Tampilan Biru Premium di Layar) */
+    .container { 
+      max-width: 520px; 
+      margin: 40px auto; 
+      padding: 35px; 
+      background: #ffffff;
+      border: 1px solid #d0dbe5;
+      border-radius: 12px; 
+      box-shadow: 0 10px 25px rgba(37, 99, 235, 0.05); 
+    }
+    .form-header { text-align: center; margin-bottom: 25px; }
+    .logo-img { width: 75px; height: auto; margin-bottom: 12px; }
+    .form-header h2 { color: #1e40af; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+    .form-header p { color: #475569; margin: 5px 0 0 0; font-size: 15px; font-weight: 600; }
+    
+    .form-group { margin-bottom: 18px; }
+    label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 13px; color: #334155; }
+    input, select, textarea { 
+      width: 100%; 
+      padding: 11px 14px; 
+      border: 1px solid #cbd5e1; 
+      border-radius: 6px; 
+      font-size: 14px;
+      background-color: #f8fafc;
+      transition: all 0.2s ease;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #2563eb;
+      background-color: #fff;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+    textarea {
+      resize: vertical;
+      font-size: 13px;
+    }
+    
+    button#btn { 
+      background: #2563eb; 
+      color: white; 
+      padding: 14px; 
+      border: none; 
+      border-radius: 6px; 
+      width: 100%; 
+      cursor: pointer; 
+      font-size: 15px; 
+      font-weight: 700; 
+      letter-spacing: 0.5px;
+      transition: background 0.2s ease;
+    }
+    button#btn:hover { background: #1d4ed8; }
+    button:disabled { background: #94a3b8; cursor: not-allowed; }
+    
+    /* Layout Bingkai Utama Sesuai Format Resmi */
+    #printArea { 
+      display: none; 
+      background: #fff;
+      max-width: 790px;
+      margin: 10px auto;
+      padding: 10px;
+    }
+    
+    /* Logo Header untuk Cetak */
+    .print-logo-header {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .print-logo-header .logo-img {
+      width: 65px;
+      margin-bottom: 5px;
+    }
+    
+    .main-border-box { border: 2px solid #000; padding: 0; margin-bottom: 10px; background: #fff; }
+    
+    .title-area { 
+      text-align: center; 
+      font-weight: 700; 
+      font-size: 12.5px; 
+      padding: 10px; 
+      border-bottom: 2px solid #000; 
+      text-transform: uppercase; 
+      line-height: 1.4; 
+      color: #000;
+    }
+    .section-title { 
+      font-weight: 700; 
+      padding: 5px 10px; 
+      font-size: 11px; 
+      border-bottom: 1px solid #000; 
+      background-color: #fff; 
+      text-transform: uppercase; 
+      letter-spacing: 0.5px;
+      color: #000;
+    }
+    
+    /* Tabel Data Karakteristik Gambar */
+    .data-table { width: 100%; border-collapse: collapse; }
+    .data-table td { border-bottom: 1px solid #000; padding: 4px 8px; font-size: 10.5px; height: 23px; box-sizing: border-box; vertical-align: middle; color: #000; }
+    .lbl-left { text-align: right; font-weight: 700; width: 38%; padding-right: 12px !important; }
+    .colon-center { text-align: center; width: 3%; padding: 0 !important; font-weight: 700; }
+    .val-right { text-align: left; width: 59%; }
+    
+    /* Box Pas Foto Standar 4x6 Proporsional & Diperbesar */
+    .box-foto-container { border-left: 1px solid #000; text-align: center; vertical-align: middle !important; background: #fff; padding: 4px !important; }
+    .photo-frame {
+      border: 1px dashed #000;
+      width: 90px;       
+      height: 130px;      
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fafafa;
+      margin: auto;
+    }
+    .text-foto-warna { color: #1e40af; font-weight: 700; font-size: 9px; line-height: 1.2; text-transform: uppercase; display: block; }
+    
+    /* Desain Pisah Kotak Antrean & Ukuran Font Besar Disamakan */
+    .antrian-wrapper { display: inline-flex; align-items: center; gap: 4px; vertical-align: middle; }
+    .box-part {
+      border: 1px solid #000;
+      padding: 2px 8px;
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      border-radius: 4px;
+      line-height: 1.2;
+      display: inline-block;
+    }
+    .box-op { background: #eff6ff; color: #1e40af; }
+    .box-no { background: #eff6ff; color: #2563eb; }
+    .box-hari { background: #ffffff; color: #000000; }
+
+    /* Tabel Ceklis Berkas - Super Slim Mode untuk 1 Lembar F4 */
+    .ceklis-table { width: 100%; border-collapse: collapse; margin: 8px 0; }
+    .ceklis-table th, .ceklis-table td { border: 1px solid #000; padding: 3px 5px; font-size: 10px; vertical-align: middle; color: #000; line-height: 1.2; }
+    .ceklis-table th { background-color: #f1f5f9; text-align: center; font-size: 10px; font-weight: 700; padding: 5px 3px; }
+    .center-text { text-align: center; }
+    
+    .note-text { font-size: 9.5px; font-style: italic; margin-top: 6px; line-height: 1.3; color: #334155; }
+    
+    /* Grid TTD Panitia */
+    .ttd-grid { width: 100%; margin-top: 12px; border-collapse: collapse; }
+    .ttd-grid td { width: 50%; text-align: center; padding: 4px 0; font-size: 10.5px; vertical-align: top; color: #000; line-height: 1.3; }
+    .ttd-space { height: 38px; } 
+    
+    .footer-pdf { text-align: center; margin-top: 20px; font-weight: 700; border-top: 1px dashed #000; padding-top: 6px; font-size: 10.5px; color: #000; }
+
+    /* Action Buttons Layer */
+    .btn-container { text-align: center; margin-top: 20px; padding-top: 10px; }
+    .btn-action { border: none; padding: 8px 22px; font-size: 13px; font-weight: 600; border-radius: 6px; cursor: pointer; transition: background 0.2s; }
+    .btn-print { background-color: #2563eb; color: white; }
+    .btn-print:hover { background-color: #1d4ed8; }
+    .btn-back { background-color: #dc2626; color: white; margin-left: 10px; }
+    .btn-back:hover { background-color: #b91c1c; }
+
+    /* Responsive Layout */
+    html { font-size: 15px; }
+    body { padding: 14px; }
+    .container { width: min(100%, 520px); margin: 24px auto; padding: 24px; }
+    input, select, textarea { font-size: 15px; }
+    #printArea, .main-border-box { width: 100%; overflow-x: auto; }
+    .data-table, .ceklis-table, .ttd-grid { width: 100%; min-width: 100%; }
+    .data-table td, .ceklis-table th, .ceklis-table td { word-break: break-word; }
+
+    @media (max-width: 520px) {
+      body { padding: 10px; }
+      .container { margin: 10px auto; padding: 20px; }
+      .form-header h2 { font-size: 22px; }
+      .form-header p { font-size: 14px; }
+      .form-group { margin-bottom: 16px; }
+      input, select, textarea { padding: 12px; }
+      button#btn, .btn-action { font-size: 14px; }
+      .box-part { font-size: 10px; padding: 2px 6px; }
+      .photo-frame { width: 72px; height: 104px; }
+    }
+
+    /* Pengaturan Cetak A4 */
+    @media print {
+      @page { size: A4 portrait; margin: 0.35cm 0.4cm; }
+      body { background-color: #fff; padding: 0; margin: 0; }
+      html, body { width: 210mm; height: 297mm; }
+      body * { visibility: hidden; }
+      #printArea, #printArea * { visibility: visible; }
+      #printArea { display: block; position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0.3cm; font-size: 0.88rem; }
+      .no-print, .btn-container { display: none !important; }
+      .box-op, .box-no { background: #fff !important; }
+      .photo-frame { background: #fff !important; }
+      .main-border-box { margin-bottom: 4px; }
+      .title-area { font-size: 11px; padding: 6px 8px; }
+      .section-title { font-size: 10px; padding: 4px 8px; }
+      .data-table td { padding: 3px 6px; font-size: 9px; height: auto; }
+      .ceklis-table th, .ceklis-table td { padding: 2px 4px; font-size: 8px; }
+      .ceklis-table { margin: 4px 0; }
+      .note-text { font-size: 8.8px; margin-top: 4px; }
+      .ttd-grid td { padding: 3px 0; font-size: 9px; }
+      .ttd-space { height: 24px; }
+      .box-part { padding: 1px 6px; font-size: 10px; }
+      .footer-pdf { font-size: 9px; margin-top: 6px; }
+      .ttd-grid, .ceklis-table, .main-border-box { page-break-inside: avoid; break-inside: avoid-column; page-break-before: avoid; page-break-after: avoid; }
+      .box-foto-container { padding: 2px !important; }
+      .photo-frame { width: 72px; height: 105px; }
+      .text-foto-warna { font-size: 8px; line-height: 1.1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- AREA FORM INPUT -->
+  <div id="formArea" class="container">
+    <div class="form-header">
+      <img src="LOGO_SEKOLAH.png" alt="Logo Sekolah" class="logo-img">
+      <h2>SPMB 2026</h2>
+      <p><?= namaSekolah ?></p>
+    </div>
+    <form id="fAntrian" onsubmit="submitForm(this); return false;">
+      <div class="form-group">
+        <label>Nama Lengkap Calon Murid</label>
+        <input type="text" 
+               name="nama" 
+               placeholder="Masukkan nama sesuai ijazah" 
+               oninput="this.value = this.value.replace(/[^A-Za-z\s']/g, '');" 
+               required>
+      </div>
+      <div class="form-group">
+        <label>NISN</label>
+        <input type="text" 
+               name="nisn" 
+               inputmode="numeric" 
+               pattern="[0-9]{10}" 
+               maxlength="10" 
+               placeholder="Masukkan 10 digit NISN" 
+               oninput="this.value = this.value.replace(/[^0-9]/g, '');" 
+               required>
+      </div>
+      <div class="form-group">
+        <label>Jurusan Pilihan 1 (Utama)</label>
+        <select id="jurusan1" name="jurusan1" required>
+          <option value="">-- Pilih Jurusan Utama --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Jurusan Pilihan 2 (Alternatif)</label>
+        <select id="jurusan2" name="jurusan2" required>
+          <option value="">-- Pilih Jurusan Alternatif --</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Jenis Kelamin</label>
+        <select name="jenis_kelamin" required>
+          <option value="">-- Pilih Jenis Kelamin --</option>
+          <option value="LAKI-LAKI">Laki-laki</option>
+          <option value="PEREMPUAN">Perempuan</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Tempat Lahir</label>
+        <input type="text" name="tempat_lahir" placeholder="Contoh: Purbalingga" required>
+      </div>
+      <div class="form-group">
+        <label>Tanggal Lahir</label>
+        <input type="date" name="tgl_lahir" required>
+      </div>
+      <div class="form-group">
+        <label>NIK (No Identitas Anak)</label>
+        <input type="text" 
+               name="nik" 
+               inputmode="numeric" 
+               maxlength="16" 
+               placeholder="Masukkan 16 digit NIK" 
+               oninput="this.value = this.value.replace(/[^0-9]/g, '');" 
+               required>
+      </div>
+      <div class="form-group">
+        <label>Agama</label>
+        <select name="agama" required>
+          <option value="">-- Pilih Agama --</option>
+          <option value="ISLAM">Islam</option>
+          <option value="KRISTEN">Kristen</option>
+          <option value="KATOLIK">Katolik</option>
+          <option value="HINDU">Hindu</option>
+          <option value="BUDDHA">Buddha</option>
+          <option value="KONGHUCU">Konghucu</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Alamat Lengkap</label>
+        <textarea name="alamat" rows="3" placeholder="Masukkan alamat lengkap" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" name="email" placeholder="Masukkan email aktif" required>
+      </div>
+      <div class="form-group">
+        <label>Nomor Kartu Keluarga</label>
+        <input type="text" 
+               name="no_kk" 
+               inputmode="numeric" 
+               maxlength="16" 
+               placeholder="Masukkan nomor KK" 
+               oninput="this.value = this.value.replace(/[^0-9]/g, '');" 
+               required>
+      </div>
+      <div class="form-group">
+        <label>Penerima KIP</label>
+        <select name="penerima_kip" required>
+          <option value="">-- Pilih Penerima KIP --</option>
+          <option value="YA">YA</option>
+          <option value="TIDAK">TIDAK</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Nomor HP/WA Siswa (Aktif)</label>
+        <input type="text" 
+               name="no_hp" 
+               inputmode="numeric" 
+               pattern="[0-9]{10,14}" 
+               maxlength="14" 
+               placeholder="Contoh: 08123456xxx" 
+               oninput="this.value = this.value.replace(/[^0-9]/g, '');" 
+               required>
+      </div>
+      <div class="form-group">
+        <label>Nama Orang Tua/Wali (Ayah)</label>
+        <input type="text" 
+               name="nama_ortu" 
+               placeholder="Masukkan nama orang tua/wali" 
+               oninput="this.value = this.value.replace(/[^A-Za-z\s']/g, '');" 
+               required>
+      </div>
+      <div class="form-group">
+        <label>Nomor HP/WA Orang Tua</label>
+        <input type="text" 
+               name="no_hp_ortu" 
+               inputmode="numeric" 
+               pattern="[0-9]{10,14}" 
+               maxlength="14" 
+               placeholder="Contoh: 08123456xxx" 
+               oninput="this.value = this.value.replace(/[^0-9]/g, '');" 
+               required>
+      </div>
+      <div class="form-group">
+        <label>Sekolah Asal (SMP Asal)</label>
+        <input type="text" name="asal_sekolah" placeholder="Masukkan sekolah asal" required>
+      </div>
+      <div class="form-group">
+        <label style="display: flex; align-items: center; cursor: pointer;">
+          <input type="checkbox" name="konfirmasi" value="YA" required style="width: auto; margin-right: 8px;">
+          Saya mengkonfirmasi bahwa data di atas sudah benar dan sesuai
+        </label>
+      </div>
+      <div id="formError" class="note-text" style="color:#b91c1c; display:none;"></div>
+      <button type="submit" id="btn">AMBIL NOMOR ANTRIAN</button>
+    </form>
+  </div>
+
+  <!-- AREA TICKETING / PRINT PREVIEW -->
+  <div id="printArea">
+    <div class="main-border-box">
+      <div class="title-area">
+        DAFTAR VERIFIKASI KELENGKAPAN DOKUMEN/BERKAS SPMB SMA NEGERI/SMK NEGERI<br>
+        PROVINSI JAWA TENGAH<br>
+        TAHUN 2026
+      </div>
+      
+      <div class="section-title">A. DATA CALON MURID</div>
+      
+      <table class="data-table">
+        <tr>
+          <td class="lbl-left">LOKASI VERIFIKASI</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><b><?= namaSekolah ?></b></td>
+          <td rowspan="3" class="box-foto-container" width="135">
+            <div class="photo-frame">
+              <span class="text-foto-warna">PAS FOTO<br>3 x 4</span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl-left">NAMA CALON MURID BARU</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="p1" style="font-weight:bold;"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">NISN</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="p2"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">PILIHAN JURUSAN</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="pJurusan1"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">PILIHAN JURUSAN ALTERNATIF</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="pJurusan2"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">JENIS KELAMIN</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="pJenisKelamin"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">TEMPAT LAHIR</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="pTempatLahir"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">TANGGAL LAHIR</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="pTglLahir"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">ALAMAT LENGKAP</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="pAlamat"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">NO. HP / WA AKTIF</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="p_hp"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">EMAIL</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="pEmail"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">PENERIMA KIP</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="pKIP"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">NAMA ORANG TUA / WALI (AYAH)</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="pNamaOrtu"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">NO. HP ORTU / WALI</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="pHpOrtu"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">SEKOLAH ASAL (SMP ASAL)</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="pSekolahAsal"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left">NOMOR ANTRIAN VERIFIKASI</td>
+          <td class="colon-center">:</td>
+          <td class="val-right">
+            <!-- Modifikasi Layout Pisah Kotak dengan Font Besar yang Sama Singkron -->
+            <div class="antrian-wrapper">
+              <span id="lblLoket" class="box-part box-op"></span>
+              <span class="box-part box-no">NOMOR <span id="p5"></span></span>
+              <span class="box-part box-hari"><span id="p4"></span></span>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="lbl-left">SESI</td>
+          <td class="colon-center">:</td>
+          <td class="val-right"><span id="p6" style="font-weight:bold;"></span></td>
+        </tr>
+        <tr>
+          <td class="lbl-left" style="border-bottom:none;">JALUR YANG DAPAT DIGUNAKAN UNTUK PENDAFTARAN/PEMILIHAN SEKOLAH</td>
+          <td class="colon-center" style="border-bottom:none;">:</td>
+          <td class="val-right" colspan="2" style="border-bottom:none;">..........................................................................................</td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="section-title" style="border: 2px solid #000; border-bottom:1px solid #000; margin-bottom:0;">B. DOKUMEN/BERKAS</div>
+    
+    <table class="ceklis-table" style="margin-top:0; border: 2px solid #000; border-top:none;">
+      <thead>
+        <tr>
+          <th width="4%">NO</th>
+          <th width="66%">NAMA DOKUMEN/BERKAS</th>
+          <th width="9%">FOTO COPY<br>(ADA/TIDAK)</th>
+          <th width="9%">BERKAS ASLI<br>(YA/TIDAK)</th>
+          <th width="12%">KETERANGAN</th>
+        </tr>
+      </thead>
+      <tbody id="listBerkas"></tbody>
+    </table>
+
+    <div class="note-text">
+      Demikian Dokumen/Berkas SPMB SMA Negeri dan SMK Negeri yang telah diperiksa dan teliti sesuai dengan aslinya oleh Tim Verifikasi, Orang Tua/Wali, Calon Peserta Didik dan Ketua Panitia SPMB Tingkat Sekolah.<br>
+      Apabila di kemudian hari ditemukan dan atau terdapat Dokumen yang tidak sesuai, sepenuhnya menjadi tanggungjawab Orang Tua Wali dan Calon Murid Baru.<br>
+      <b>Dokumen ini dicetak 2 (dua) rangkap. 1 (satu) untuk orang tua/wali, 1 untuk arsip Sekolah.</b>
+    </div>
+
+    <table class="ttd-grid">
+      <tr>
+        <td>Orang Tua/Wali,<br><div class="ttd-space"></div>( ............................................ )</td>
+        <td><span id="p4"></span><br>Calon Murid,<br><div class="ttd-space"></div>( <b><span id="p1_ttd"></span></b> )</td>
+      </tr>
+      <tr>
+        <td>Mengetahui,<br>Ketua Panitia<br><div class="ttd-space"></div>( <b>________________________ </b>)<br>NIP.-</td>
+        <td><br>Verifikator,<br><div class="ttd-space"></div>( ________________________ )</td>
+      </tr>
+    </table>
+
+    <div class="footer-pdf"><?= footerTeks ?></div>
+    
+    <div class="btn-container no-print">
+      <button onclick="window.print()" class="btn-action btn-print">CETAK FORM VERIFIKASI</button>
+      <button onclick="window.location.href='/'" class="btn-action btn-back">KEMBALI</button>
+    </div>
+  </div>
+
+  <script>
+    const berkasJateng = [
+      "Asli Buku Rapor SMP/sederajat.",
+      "Asli Surat Keterangan Nilai Rapor Semester 1 (satu) sampai dengan Semester 5 (lima) SMP/sederajat yang diterbitkan oleh Satuan Pendidikan yang bersangkutan.",
+      "Asli Sertifikat Hasil Tes Kemampuan Akademik (TKA) SMP/sederajat atau copy Daftar Kolektif Hasil Tes Kemampuan Akademik (DKHTKA).",
+      "Asli Ijazah SMP/sederajat / Surat Keterangan yang berpenghargaan sama dengan ijazah SMP/ijazah Program Paket B/Ijazah Satuan Pendidikan Luar Negeri atau Asli Surat Keterangan Lulus (SKL).",
+      "Asli Akta Kelahiran dengan batas usia paling tinggi 21 (dua puluh satu) tahun terhitung pada tanggal 1 Juli 2026, dan belum menikah.",
+      "Asli Kartu Keluarga yang diterbitkan dan/atau telah tinggal paling singkat 1 (satu) tahun sebelum tanggal pendaftaran SPMB (Tanggal 14 Juni 2026).",
+      "Asli surat penugasan dari instansi pemerintah/lembaga negara/BUMN/BUMD/khusus perusahaan swasta yang berbadan hukum (Bagi jalur perpindahan tugas orang tua).",
+      "Asli Surat Pernyataan dari Kepala Sekolah bagi calon murid yang merupakan anak guru.",
+      "Asli Surat Keterangan Domisili/surat keterangan bertempat tinggal yang diterbitkan oleh lurah/kepala desa dan diketahui oleh camat (Bagi jalur mutasi).",
+      "Asli piagam prestasi/kejuaraan sesuai piagam yang diunggah pada saat ajuan akun bagi Calon Murid yang memiliki.",
+      "Asli Surat Keterangan Kepala Sekolah SMP/sederajat yang berisi keterangan bahwa calon murid pernah menjadi Ketua OSIS/OSIM/MPK/Pratama Pramuka.",
+      "Asli Surat Keterangan Sehat dari dokter Pemerintah atau Asli Surat Pernyataan Sehat / Asli Surat Pernyataan Tidak buta Warna dari calon murid yang diketahui orang tua."
+    ];
+    
+    let rows = "";
+    berkasJateng.forEach((b, i) => {
+      rows += `<tr>
+        <td class="center-text"><b>${i+1}</b></td>
+        <td>${b}</td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>`;
+    });
+    document.getElementById('listBerkas').innerHTML = rows;
+
+    function refreshJurusanValidation() {
+      const primary = document.getElementById('jurusan1');
+      const alternate = document.getElementById('jurusan2');
+      if (!primary || !alternate) return;
+
+      if (primary.value && alternate.value && primary.value === alternate.value) {
+        alternate.setCustomValidity('Pilihan jurusan alternatif tidak boleh sama dengan jurusan utama.');
+      } else {
+        alternate.setCustomValidity('');
+      }
+      alternate.reportValidity();
+    }
+
+    function populateJurusanOptions() {
+      google.script.run.withSuccessHandler(options => {
+        if (!Array.isArray(options)) return;
+
+        const primary = document.getElementById('jurusan1');
+        const alternate = document.getElementById('jurusan2');
+        if (!primary || !alternate) return;
+
+        const createOption = (value, label) => {
+          const option = document.createElement('option');
+          option.value = value;
+          option.textContent = label;
+          return option;
+        };
+
+        primary.innerHTML = '<option value="">-- Pilih Jurusan Utama --</option>';
+        alternate.innerHTML = '<option value="">-- Pilih Jurusan Alternatif --</option>';
+
+        options.forEach(jurusan => {
+          const normalized = String(jurusan).trim();
+          if (!normalized) return;
+          primary.appendChild(createOption(normalized, normalized));
+          alternate.appendChild(createOption(normalized, normalized));
+        });
+
+        primary.addEventListener('change', refreshJurusanValidation);
+        alternate.addEventListener('change', refreshJurusanValidation);
+      }).getDataJurusan();
+    }
+
+    window.addEventListener('DOMContentLoaded', populateJurusanOptions);
+
+    function submitForm(f) {
+      document.getElementById('btn').disabled = true;
+      document.getElementById('btn').innerText = "Mengunci Nomor Antrian Resmi...";
+
+      google.script.run
+        .withSuccessHandler(res => {
+          document.getElementById('formArea').style.display = 'none';
+          document.getElementById('printArea').style.display = 'block';
+          
+          document.getElementById('pJurusan1').innerText = res.jurusan1;
+          document.getElementById('pJurusan2').innerText = res.jurusan2;
+          document.getElementById('p1').innerText = document.getElementById('p1_ttd').innerText = res.nama;
+          document.getElementById('pJenisKelamin').innerText = res.jenis_kelamin;
+          document.getElementById('p2').innerText = res.nisn;
+          document.getElementById('pTempatLahir').innerText = res.tempat_lahir;
+          document.getElementById('pTglLahir').innerText = res.tgl_lahir;
+          // document.getElementById('pNik').innerText = res.nik;
+          // document.getElementById('pAgama').innerText = res.agama;
+          document.getElementById('pAlamat').innerText = res.alamat;
+          document.getElementById('p_hp').innerText = res.no_hp;
+          document.getElementById('pEmail').innerText = res.email;
+          // document.getElementById('pKK').innerText = res.no_kk;
+          document.getElementById('pKIP').innerText = res.penerima_kip;
+          document.getElementById('pNamaOrtu').innerText = res.nama_ortu;
+          document.getElementById('pHpOrtu').innerText = res.no_hp_ortu;
+          document.getElementById('pSekolahAsal').innerText = res.asal;
+          document.getElementById('p4').innerText = res.hari;
+          document.getElementById('p5').innerText = res.nomor;
+          document.getElementById('p6').innerText = res.sesi;
+          document.getElementById('lblLoket').innerText = res.loket;
+          
+          window.print();
+        })
+        .withFailureHandler(err => {
+          const btn = document.getElementById('btn');
+          btn.disabled = false;
+          btn.innerText = 'AMBIL NOMOR ANTRIAN';
+          const message = err && err.message ? err.message : 'Gagal membuat antrian. Silakan coba lagi.';
+          alert(err.message);
+        })
+        .daftarAntrian(f);
+    }
+  </script>
+</body>
+</html>
